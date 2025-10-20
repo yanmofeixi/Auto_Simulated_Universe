@@ -73,6 +73,8 @@ class DivergentUniverse(UniverseUtils):
         self.event_text = ''
 
         self.long_range = '1' # 默认角色 选用1号位
+        
+        self.boss_counted = False # 当前首领房是否已计数
 
         self.init_floor()
         self.saved_num = 0
@@ -122,7 +124,7 @@ class DivergentUniverse(UniverseUtils):
         res = self.run_static()
         # self.click_target("imgs/c.jpg", threshold=0.9, flag=False)
         if res == '':
-            area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
+            ad = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
             if '位面' in area_text or '区域' in area_text or '第' in area_text:
                 self.area()
                 self.last_action_time = time.time()
@@ -299,6 +301,20 @@ class DivergentUniverse(UniverseUtils):
                 return i
         return None
     
+    def has_team_member(self, char_name):
+        """检查队伍中是否有指定角色（支持子字符串匹配）"""
+        for team_char in self.team_member.keys():
+            if char_name in team_char or team_char in char_name:
+                return True
+        return False
+    
+    def get_team_member_position(self, char_name):
+        """获取队伍中指定角色的位置（支持子字符串匹配）"""
+        for team_char, position in self.team_member.items():
+            if char_name in team_char or team_char in char_name:
+                return position
+        return None
+    
     def test(self):
         self.find_team_member()
 
@@ -308,8 +324,21 @@ class DivergentUniverse(UniverseUtils):
         team_member = {}
         for i,b in enumerate(boxes):
             name = self.clean_text(self.ts.ocr_one_row(self.get_screen(), b))
+            
+            # 首先尝试精确匹配
+            found_char = None
             if name in self.character_prior:
-                team_member[name] = i
+                found_char = name
+            else:
+                # 然后尝试子字符串匹配
+                for char_name in self.character_prior.keys():
+                    if char_name in name or name in char_name:
+                        found_char = char_name
+                        break
+            
+            if found_char is not None:
+                team_member[found_char] = i
+        
         return team_member
 
     def get_now_area(self, deep=0):
@@ -327,9 +356,15 @@ class DivergentUniverse(UniverseUtils):
                 self.team_member = team_member
                 print('team_member:', team_member)
                 for i in self.team_member:
+                    # 子字符串匹配检查是否在远程列表中
+                    is_long_range = False
+                    for long_range_char in config.long_range_list:
+                        if long_range_char in i or i in long_range_char:
+                            is_long_range = True
+                            break
 
                     # 从当前队伍中,选取处于内置远程角色列表中的第一个远程角色
-                    if i in config.long_range_list:
+                    if is_long_range:
                         self.long_range = str(self.team_member[i]+1) # 更新默认远程角色
                         break
 
@@ -351,7 +386,7 @@ class DivergentUniverse(UniverseUtils):
         if self.speed:
             prefer_portal = {'商店':3, '财富':3, '奖励':2, '事件':2, '战斗':1, '遭遇':1}
             if (self.quan or self.bai_e) and self.allow_e:
-                prefer_portal['战斗'] = 2
+                prefer_portal['战斗'] = 3
         if config.enable_portal_prior:
             prefer_portal.update(config.portal_prior)
         prefer_portal.update({'首领':4, '休整':4})
@@ -779,10 +814,10 @@ class DivergentUniverse(UniverseUtils):
         time.sleep(0.8)
 
         if self.area_state == 0:
-            # 判断队伍成员状态
-            da_hei_ta_in_team = '大黑塔' in self.team_member
-            bai_e_in_team = '白厄' in self.team_member
-            huang_quan_in_team = '黄泉' in self.team_member
+            # 判断队伍成员状态（使用子字符串匹配）
+            da_hei_ta_in_team = self.has_team_member('大黑塔')
+            bai_e_in_team = self.has_team_member('白厄')
+            huang_quan_in_team = self.has_team_member('黄泉')
 
             # 判断秘技状态
             da_hei_ta_has_skill = '大黑塔' in config.skill_char
@@ -815,13 +850,16 @@ class DivergentUniverse(UniverseUtils):
 
                 # 存在大黑塔时,直接使用大黑塔作为站场角色
                 if self.da_hei_ta:
-                    self.press(str(self.team_member['大黑塔']+1))
+                    pos = self.get_team_member_position('大黑塔')
+                    self.press(str(pos+1))
                 elif self.bai_e and area_now == '战斗':
                     # 无大黑塔,那就切白厄
-                    self.press(str(self.team_member['白厄']+1))
+                    pos = self.get_team_member_position('白厄')
+                    self.press(str(pos+1))
                 elif self.quan and area_now == '战斗':
                     # 无大黑塔/白厄,那就切黄泉
-                    self.press(str(self.team_member['黄泉']+1))
+                    pos = self.get_team_member_position('黄泉')
+                    self.press(str(pos+1))
                 else:
                     # 切远程角色
                     self.press(self.long_range)
@@ -967,29 +1005,46 @@ class DivergentUniverse(UniverseUtils):
 
         elif area_now == '首领':
             if self.floor == 13 and self.area_state > 0:
-                # 已经结束战斗了
+                # 已经结束战斗了，增加计数并通知
+                if not self.boss_counted:
+                    self.boss_counted = True
+                    self.add_count_and_notify()
                 self.close_and_exit()
                 self.end_of_uni()
                 return 1
 
             if self.area_state == 0:
+                self.boss_counted = False  # 进入新的首领房，重置标志位
                 self.press('w',3)
                 for c in config.skill_char:
-                    if (c in self.team_member or c.isdigit()) and self.allow_e:
+                    # 使用子字符串匹配检查角色是否在队伍中
+                    in_team = self.has_team_member(c) if not c.isdigit() else True
+                    if in_team and self.allow_e:
                         if c == '大黑塔' and self.da_hei_ta_effecting:
                             # 大黑塔秘技生效中,跳过
                             continue
-                        self.press(int(c) if c.isdigit() else str(self.team_member[c]+1))
-                        time.sleep(0.8)
-                        self.check_dead()
-                        self.skill()
-                        time.sleep(1.5)
+                        if c.isdigit():
+                            key = int(c)
+                        else:
+                            pos = self.get_team_member_position(c)
+                            key = pos + 1 if pos is not None else None
+                        
+                        if key is not None:
+                            self.press(str(key))
+                            time.sleep(0.8)
+                            self.check_dead()
+                            self.skill()
+                            time.sleep(1.5)
 
                 pyautogui.click()
                 time.sleep(0.2)
                 pyautogui.click()
                 self.area_state += 1
             else:
+                # 战斗结束了，增加计数并通知
+                if not self.boss_counted:
+                    self.boss_counted = True
+                    self.add_count_and_notify()
                 time.sleep(1)
                 self.portal_opening_days(static=1)
 
@@ -1004,11 +1059,12 @@ class DivergentUniverse(UniverseUtils):
                 time.sleep(0.2)
                 keyops.keyDown('shift')
                 tm = time.time()
-                while time.time() - tm < 3:
+                while time.time() - tm < (1.45 if self.bai_e else 3):
                     self.get_screen()
                     if self.check("divergent/z",0.5771,0.9546,mask="mask_z",threshold=0.96):
                         break
-                time.sleep(0.8)
+                if not self.bai_e:
+                    time.sleep(0.8)
                 keyops.keyUp('w')
                 keyops.keyUp('shift')
                 if self.quan and self.allow_e:
@@ -1109,25 +1165,18 @@ class DivergentUniverse(UniverseUtils):
         time.sleep(1)
 
     def end_of_uni(self):
-        self.update_count(0)
-        self.my_cnt += 1
-        tm = int((time.time() - self.init_tm) / 60)
-        remain_round = self.nums-self.my_cnt
-        if remain_round > 0:
-            remain = int(remain_round * (time.time() - self.init_tm) / self.my_cnt / 60)
-        else:
-            remain = 0
-            remain_round = -1
-        notif(
-            "已完成",
-            f"计数:{self.count} 剩余:{remain_round} 已使用：{tm//60}小时{tm%60}分钟  平均{tm//self.my_cnt}分钟一次  预计剩余{remain//60}小时{remain%60}分钟",
-            cnt=str(self.count),
-        )
-        if self.nums <= self.my_cnt and self.nums >= 0:
-            log.info('已完成上限，准备停止运行')
-            self.end = 1
         self.floor = 0
         self.init_floor()
+    
+    def add_count_and_notify(self):
+        """增加计数并通知"""
+        self.update_count(0)
+        self.my_cnt += 1
+        notif(
+            "已完成",
+            f"{self.my_cnt}/{self.nums}",
+            cnt=str(self.count),
+        )
 
     def update_count(self, read=True):
         file_name = "logs/notif.txt"
@@ -1179,9 +1228,11 @@ class DivergentUniverse(UniverseUtils):
         )
         monday_ts = target_datetime.timestamp()
         if dt.timestamp() >= monday_ts and time_cnt < monday_ts:
+            # 新的一周，重置计数
             self.count = int(not read)
         else:
             self.count = new_cnt
+        
         self.count_tm = time.time()
 
     def stop(self, *_, **__):
