@@ -116,7 +116,6 @@ class UniverseUtils:
         last_info (str): 上次匹配的图片路径
         mini_target (int): 小地图目标类型
         f_time (float): F 键交互时间
-        slow (int): 慢速模式标志
         init_ang (int): 初始视角角度
         allow_e (int): 是否允许使用 E 技能
         quan (int): 黄泉模式标志
@@ -152,7 +151,6 @@ class UniverseUtils:
         self.last_info = ""
         self.mini_target = 0
         self.f_time = 0
-        self.slow = 0
         self.init_ang = 0
         self.allow_e = 1
         self.quan = 0
@@ -182,14 +180,13 @@ class UniverseUtils:
         return common_gen_hotkey_img(hotkey=hotkey, bg=bg)
 
     def press(self, c, t=0):
-        # 通用实现:保持 stop/allow_e/slow 语义与历史一致
+        # 通用实现
         return common_press_key(
             key=c,
             duration=t,
             log=log,
             keyops=keyops,
             allow_e=bool(self.allow_e),
-            slow_mode=bool(self.slow),
             stop_flag=lambda: self._stop,
         )
 
@@ -386,8 +383,9 @@ class UniverseUtils:
             threshold = self.threshold
         formatted_target_path = self.format_path(path)
         target = cv.imread(formatted_target_path)
-        if formatted_target_path == "imgs/f.jpg" and config.mapping[0] != "f":
-            target = self.gen_hotkey_img(config.mapping[0])
+        if formatted_target_path == "imgs/f.jpg":
+            # 使用默认的 f 键图片
+            pass
             threshold -= 0.01
 
         match = match_template_near_point(
@@ -954,7 +952,7 @@ class UniverseUtils:
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while dtm[0] < time.time() - 1.7 + sft * 1 - self.slow * 0.4:
+                while dtm[0] < time.time() - 1.7 + sft * 1:
                     dtm = dtm[1:]
                     dls = dls[1:]
                 c += 1
@@ -1126,8 +1124,6 @@ class UniverseUtils:
         self.real_loc = (int(x + 10 + dx), int(y + dy))
 
     def get_offset(self, delta=1):
-        if self.slow:
-            delta /= 2
         pi = 3.141592653589
         dx, dy = sin(self.ang / 180 * pi), cos(self.ang / 180 * pi)
         return (delta * dx * 3, delta * dy * 3)
@@ -1402,9 +1398,7 @@ class UniverseUtils:
                 if self.check("z", 0.5906, 0.9537, mask="mask_z", threshold=0.95):
                     self.stop_move = 1
                     time.sleep(
-                        1.7
-                        + self.slow * 1.1
-                        - (self.quan and self.floor not in [3, 7, 12]) * 0.5
+                        1.7 - (self.quan and self.floor not in [3, 7, 12]) * 0.5
                     )
                     if (
                         self.mini_state == 1

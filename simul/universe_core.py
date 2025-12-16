@@ -2,7 +2,6 @@
 
 import os
 import random
-import threading
 import time
 import traceback
 from copy import deepcopy
@@ -16,10 +15,9 @@ import win32api, win32con, win32gui
 from align_angle import main as align_angle
 from simul.config import config
 from simul.map_log import map_log
-from simul.update_map import update_map
 from simul.utils import notif, set_forground, UniverseUtils
 from utils.common.run_counter import update_weekly_counter
-from utils.log import log, set_debug
+from utils.log import log
 
 # 版本号
 version = "v6.3"
@@ -31,34 +29,19 @@ class SimulatedUniverse(UniverseUtils):
     def __init__(
         self,
         find,
-        debug,
-        show_map,
-        speed,
         consumable,
-        slow,
         unlock=False,
-        bonus=False,
-        update=0,
-        gui=0,
     ):
         """初始化普通模拟宇宙自动化上下文.
 
-        参数说明(与历史行为保持兼容):
+        参数说明:
         - find: 0 录图 / 1 跑图
-        - debug: 0/1/2 调试模式
-        - show_map: 是否显示地图窗口(仅跑图时有效)
-        - speed: 速通模式开关
         - consumable: 精英/首领战前是否使用消耗品
-        - slow: 慢速模式开关
         - unlock: 是否跳过依赖检查
-        - bonus: 是否自动领取沉浸奖励
-        - update: 是否更新地图
         """
         super().__init__()
         log.info("当前命途:" + self.fate)
         self.validation = 1
-        if "debug" in version and not gui:
-            log.info("欢迎加入模拟宇宙小群,群号:921407322 密码:xyzzyx")
         self.now_map = None
         self.now_map_sim = None
         self.real_loc = [0, 0]
@@ -66,11 +49,7 @@ class SimulatedUniverse(UniverseUtils):
         self._stop = True
         self.img_set = []
         self.find = find
-        self.debug = debug
-        self.speed = speed
         self.consumable = consumable
-        self.slow = slow
-        self._show_map = show_map & find
         self.floor = 0
         self.count = 0
         self.count_tm = time.time()
@@ -79,23 +58,12 @@ class SimulatedUniverse(UniverseUtils):
         self.my_cnt = 0
         self.re_align = 0
         self.unlock = unlock
-        self.check_bonus = bonus
-        self.bonus = bonus
         self.kl = 0
-        self.gui = gui
         self.fail_count = 0
         self.quan = 0
-        ex_notif = ""
-        if debug != 2:
-            pyautogui.FAILSAFE = False
-        if bonus:
-            ex_notif = " 自动领取沉浸奖励"
-            log.info(ex_notif)
+        pyautogui.FAILSAFE = False
         self.update_count()
-        notif("开始运行" + ex_notif, f"初始计数:{self.count}")
-        set_debug(debug > 0)
-        if update and find:
-            update_map()
+        notif("开始运行", f"初始计数:{self.count}")
         self.lst_changed = time.time()
         log.info("加载地图")
         for file in os.listdir("imgs/maps"):
@@ -127,7 +95,7 @@ class SimulatedUniverse(UniverseUtils):
 
     def route(self):
         """主循环:等待游戏窗口、识别界面并驱动状态机."""
-        self.threshold = 0.97
+        self.threshold = config.default_threshold
         self.battle = 0
         self.quit = 0
         self.floor_init = 0
@@ -356,7 +324,7 @@ class SimulatedUniverse(UniverseUtils):
                         log.info(f"识别到传送点")
                         self.press("f")
                         return self.nof()
-                    elif self.re_align == 1 and self.debug == 0:
+                    elif self.re_align == 1:
                         self.re_align += 1
                     is_killed = text in ["沉浸", "紧锁", "复活", "下载"]
                     if is_killed == 0:
@@ -366,7 +334,7 @@ class SimulatedUniverse(UniverseUtils):
                     return 1
         # 跑图状态
         if self.isrun():
-            if self.speed and not self.quan and self.check("huangquan", 0.0578, 0.7083):
+            if self.check("huangquan", 0.0578, 0.7083):
                 self.quan = 1
             if self.floor_init == 0:
                 if self.get_level() == -1:
@@ -413,35 +381,6 @@ class SimulatedUniverse(UniverseUtils):
                         log.info(f"地图编号:{self.now_map}  相似度:{self.now_map_sim}")
                         if self.now_map_sim < 0.35:
                             notif("相似度过低", "疑似在黑塔办公室")
-                            if self.debug == 2:
-                                time.sleep(10000)
-                            # self.init_map()
-                            # return 1
-                        if self.debug == 2:
-                            try:
-                                with open(
-                                    "check0.txt",
-                                    "r",
-                                    encoding="utf-8",
-                                    errors="ignore",
-                                ) as fh:
-                                    s = fh.readline().strip("\n")
-                                s = eval(s)
-                                self.kl = 0
-                                if not self.now_map in s:
-                                    s.append(self.now_map)
-                                    notif(
-                                        f"地图编号:{self.now_map}",
-                                        f"相似度:{self.now_map_sim}",
-                                    )
-                                with open(
-                                    "check0.txt",
-                                    "w",
-                                    encoding="utf-8",
-                                ) as fh:
-                                    fh.write(str(s))
-                            except:
-                                pass
                         self.now_pth = "imgs/maps/" + self.now_map + "/"
                         files = self.find_latest_modified_file(self.now_pth)
                         print("地图文件:", files)
@@ -459,7 +398,7 @@ class SimulatedUniverse(UniverseUtils):
                         return 1
                     if (
                         self.consumable
-                        and (self.check_bonus or self.count < 34)
+                        and self.count < 34
                         and self.floor in [3, 7, 12][-self.consumable :]
                     ):
                         self.use_consumable(1, 1)
@@ -480,13 +419,12 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
 
-            self.kl |= self.floor >= 4 and self.debug == 2
             # 长时间未交互/战斗,暂离或重开
             if (
                 (
                     (
                         time.time() - self.lst_changed
-                        >= 37 - 4 * self.debug + 8 * self.slow
+                        >= 45
                     )
                     and self.find == 1
                 )
@@ -502,11 +440,6 @@ class SimulatedUniverse(UniverseUtils):
                     self.end_of_uni()
                     self.click((0.2708, 0.1324))
                     log.info(f"通关！当前层数:{self.floor+1}")
-                elif self.debug == 2:
-                    map_log.error(f"地图{self.now_map}出现问题,退出程序")
-                    log.info("地图错误")
-                    notif(f"地图{self.now_map}出现问题,退出程序", "DEBUG")
-                    self._stop = 1
                 elif self.fail_count <= 1:
                     notif("暂离", f"地图{self.now_map},当前层数:{self.floor+1}")
                     map_log.error(
@@ -518,21 +451,13 @@ class SimulatedUniverse(UniverseUtils):
                     self.fail_count += 1
                 else:
                     self.multi = 1.01
-                    if self.debug == 0:
-                        notif("中途结算", f"地图{self.now_map},当前层数:{self.floor+1}")
-                        self.floor = 0
-                        self.click((0.2708, 0.1324))
-                        map_log.error(
-                            f"地图{self.now_map}未发现目标,相似度{self.now_map_sim},尝试退出重进"
-                        )
-                        self.fail_count = 0
-                    else:
-                        self.re_align += 1
-                        map_log.error(
-                            f"地图{self.now_map}未发现目标,相似度{self.now_map_sim},尝试暂离 DEBUG"
-                        )
-                        self.click((0.2708, 0.2324))
-                        self.re_enter()
+                    notif("中途结算", f"地图{self.now_map},当前层数:{self.floor+1}")
+                    self.floor = 0
+                    self.click((0.2708, 0.1324))
+                    map_log.error(
+                        f"地图{self.now_map}未发现目标,相似度{self.now_map_sim},尝试退出重进"
+                    )
+                    self.fail_count = 0
                 self.lst_changed = time.time()
                 return 1
             if self.multi == 1.01:
@@ -691,8 +616,6 @@ class SimulatedUniverse(UniverseUtils):
                 if ft != self.fate or i == len(self.tk.secondary):
                     self.get_screen()
                     img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
-                    if self.debug == 2:
-                        print(list(st), self.tk.secondary)
                     res_down = self.ts.split_and_find(
                         list(st), img_down, mode="blessing"
                     )
@@ -819,17 +742,17 @@ class SimulatedUniverse(UniverseUtils):
                         self.del_pt(img, p, p, f_set[k])
                         if k == 3:
                             self.last = p
-        if self.speed:
-            dis = 1000000
-            pt = None
-            for i in res:
-                if i[1] == 1 and self.get_dis(i[0], self.last) < dis:
-                    dis = self.get_dis(i[0], self.last)
-                    pt = i
-            for i in deepcopy(res):
-                if i[1] == 1 and pt != i:
-                    res.remove(i)
-                    res.add((i[0], 0))
+        # 速通模式:跳过非必要怪物
+        dis = 1000000
+        pt = None
+        for i in res:
+            if i[1] == 1 and self.get_dis(i[0], self.last) < dis:
+                dis = self.get_dis(i[0], self.last)
+                pt = i
+        for i in deepcopy(res):
+            if i[1] == 1 and pt != i:
+                res.remove(i)
+                res.add((i[0], 0))
         return res
 
     def get_center(self, img, i, j):
@@ -898,11 +821,6 @@ class SimulatedUniverse(UniverseUtils):
     def stop(self, *_, **__):
         """请求停止运行(可被快捷键/异常处理调用)."""
         log.info("尝试停止运行")
-        try:
-            if self.debug:
-                traceback.print_stack()
-        except Exception:
-            pass
         self._stop = True
 
     def on_key_press(self, event):
@@ -912,59 +830,12 @@ class SimulatedUniverse(UniverseUtils):
             print("F8 已被按下,尝试停止运行")
             self.stop()
 
-    def show_map(self):
-        """调试用:实时显示当前构建的地图(阻塞到停止)."""
-        # Create a window to display the image
-        cv.namedWindow("Map", cv.WINDOW_AUTOSIZE)
-
-        # Update the image every second
-        while not self._stop:
-            if self.debug_map.shape[0] == 8192:
-                continue
-            # Load the updated image
-            updated_image = self.debug_map.copy()
-
-            # 灰度图转RGB
-            updated_image = cv.cvtColor(updated_image, cv.COLOR_GRAY2RGB)
-            updated_image[
-                self.real_loc[0] - 2 : self.real_loc[0] + 3,
-                self.real_loc[1] - 2 : self.real_loc[1] + 3,
-            ] = [49, 49, 140]
-
-            # 将图片放大两倍
-            updated_image = cv.resize(
-                updated_image, None, fx=2, fy=2, interpolation=cv.INTER_LINEAR
-            )
-
-            # Update the displayed image
-            cv.imshow("Map", updated_image)
-
-            # Wait for one second
-            cv.waitKey(1000)
-
-        # Destroy the window
-        cv.destroyAllWindows()
-
-    def check_req(self):
-        """依赖检查(历史遗留,默认不启用)."""
-        self._stop |= os.system("pip show numpy > NUL 2>&1") and not self.unlock
-        if self._stop:
-            log.info("未安装依赖库或环境变量未正确设置")
-        time.sleep(10)
-        self._stop |= os.system("pip show numpy > NUL 2>&1") and not self.unlock
-        if self._stop:
-            log.info("未安装依赖库或环境变量未正确设置")
-
     def start(self):
-        """启动自动化(注册快捷键、可选启动地图窗口,然后进入 route)."""
+        """启动自动化(注册快捷键,然后进入 route)."""
         self._stop = False
         if self.validation == 0:
             return
         keyboard.on_press(self.on_key_press)
-        if self._show_map:
-            t_map = threading.Thread(target=self.show_map)
-            t_map.start()
-        # threading.Thread(target=self.check_req).start()
         try:
             self.route()
         except KeyboardInterrupt:

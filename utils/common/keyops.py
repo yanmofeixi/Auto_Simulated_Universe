@@ -1,7 +1,6 @@
 """按键操作封装(可复用).
 
 该模块提供:
-- 逻辑按键到实际按键的映射
 - keyDown/keyUp 的公共实现
 - 可选的 KeyController(用于自动重复按键/队列事件)
 
@@ -12,47 +11,19 @@ from __future__ import annotations
 
 import threading
 import time
-from typing import Callable, List, Sequence
+from typing import Callable, List
 
 import pyautogui
 
 
-def get_mapping(key: str, *, origin_key: Sequence[str], mapping: Sequence[str]) -> str:
-    """将逻辑按键映射为实际按键."""
-
-    try:
-        index = list(origin_key).index(key)
-    except ValueError:
-        return key
-    except Exception:
-        return key
-
-    try:
-        return mapping[index]
-    except Exception:
-        return key
+def key_down(key: str) -> None:
+    """按下按键."""
+    pyautogui.keyDown(key)
 
 
-def key_down(
-    key: str,
-    *,
-    origin_key: Sequence[str],
-    mapping: Sequence[str],
-) -> None:
-    """按下按键(带映射)."""
-
-    pyautogui.keyDown(get_mapping(key, origin_key=origin_key, mapping=mapping))
-
-
-def key_up(
-    key: str,
-    *,
-    origin_key: Sequence[str],
-    mapping: Sequence[str],
-) -> None:
-    """松开按键(带映射)."""
-
-    pyautogui.keyUp(get_mapping(key, origin_key=origin_key, mapping=mapping))
+def key_up(key: str) -> None:
+    """松开按键."""
+    pyautogui.keyUp(key)
 
 
 class KeyController:

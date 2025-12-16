@@ -15,13 +15,6 @@ from utils.common.ocr_utils import (
     sort_ocr_items,
 )
 
-from utils.ocr_defaults import (
-    BLESSINGS_BY_FATE,
-    DEFAULT_CURIO,
-    DEFAULT_PRIOR_BLESSING,
-    DEFAULT_SECONDARY_FATES,
-    FATES,
-)
 from utils.onnxocr.onnx_paddleocr import ONNXPaddleOcr
 from diver.config import config as diver_config
 
@@ -161,44 +154,34 @@ class My_TS:
         return self.sort_text(ans)
 
 
-def _load_prior_config_from_info_yml() -> tuple[Optional[dict], Optional[list[str]]]:
-    try:
-        import yaml
-
-        with open("info.yml", "r", encoding="utf-8", errors="ignore") as file_handle:
-            data = yaml.safe_load(file_handle) or {}
-        prior = data.get("prior")
-        secondary = None
-        try:
-            secondary = data.get("config", {}).get("secondary_fate")
-        except Exception:
-            secondary = None
-        return prior, secondary
-    except Exception:
-        return None, None
-
-
 class text_keys:
     def __init__(self, fate: int = 4):
         self.fate = fate
-        self.interacts = ["造物调试台", "复活装置"]
-        self.fates = list(FATES)
+        # 从 config 加载所有词表
+        self.interacts = diver_config.get_interacts("diver")
+        self.fates = diver_config.get_fates()
+        self.prior_blessing = diver_config.get_prior_blessing()
+        self.curio = diver_config.get_curio()
+        self.blessings = diver_config.get_blessings_by_fate()
+        self.secondary = diver_config.get_secondary_fates()
 
-        self.prior_blessing = list(DEFAULT_PRIOR_BLESSING)
-        self.curio = list(DEFAULT_CURIO)
-        self.blessings = [list(items) for items in BLESSINGS_BY_FATE]
-        self.secondary = list(DEFAULT_SECONDARY_FATES)
+        # 从 config 读取用户配置，覆盖默认值
+        data = diver_config.load_yaml()
+        if data:
+            prior = data.get("prior")
+            try:
+                secondary_override = data.get("config", {}).get("secondary_fate")
+                if isinstance(secondary_override, list):
+                    self.secondary = secondary_override
+            except Exception:
+                pass
 
-        prior, secondary_override = _load_prior_config_from_info_yml()
-        if isinstance(secondary_override, list):
-            self.secondary = secondary_override
-
-        if isinstance(prior, dict):
-            for i, key in enumerate(prior):
-                if i > 1:
-                    self.blessings[i - 2] = prior[key]
-                elif i == 0:
-                    self.curio = prior[key]
+            if isinstance(prior, dict):
+                for i, key in enumerate(prior):
+                    if i > 1:
+                        self.blessings[i - 2] = prior[key]
+                    elif i == 0:
+                        self.curio = prior[key]
 
         self.prior_blessing += self.blessings[fate]
         self.skip = 1

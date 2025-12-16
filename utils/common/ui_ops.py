@@ -38,7 +38,6 @@ def press_key(
     log,
     keyops: _KeyOps,
     allow_e: bool,
-    slow_mode: bool,
     stop_flag: Callable[[], int],
 ) -> None:
     """按下并释放按键.
@@ -46,7 +45,6 @@ def press_key(
     语义保持与历史实现一致:
     - 若 key 不在 "3r" 中,会输出 debug 日志
     - 若 key == 'e' 且 allow_e 为 False,则直接返回
-    - 若 slow_mode 且 key == 'shift',则直接返回
     - 若 stop_flag() != 0,抛出 ValueError("正在退出")
     """
 
@@ -54,9 +52,6 @@ def press_key(
         log.debug(f"按下按钮 {key},等待 {duration} 秒后释放")
 
     if key == "e" and not allow_e:
-        return
-
-    if slow_mode and key == "shift":
         return
 
     if stop_flag() == 0:

@@ -45,7 +45,6 @@ class MapMatcher:
         self.real_loc: tuple[int, int] = (0, 0)
         self.ang: float = 0.0
         self.loc_off: int = 0
-        self.slow: bool = False
 
     def set_big_map(self, big_map: np.ndarray) -> None:
         """设置大地图.
@@ -245,9 +244,6 @@ class MapMatcher:
         Returns:
             (dx, dy) 偏移量
         """
-        if self.slow:
-            delta = delta / 2
-
         pi = 3.141592653589
         dx = sin(self.ang / 180 * pi)
         dy = cos(self.ang / 180 * pi)

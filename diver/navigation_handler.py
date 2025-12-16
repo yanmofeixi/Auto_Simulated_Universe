@@ -330,7 +330,6 @@ def update_distance_history(
     time_list: list,
     new_distance: float,
     sprint_used: int,
-    slow_mode: bool,
 ) -> tuple:
     """更新距离历史记录.
 
@@ -341,7 +340,6 @@ def update_distance_history(
         time_list: 时间历史列表
         new_distance: 新的距离值
         sprint_used: 是否使用冲刺
-        slow_mode: 是否慢速模式
 
     Returns:
         (更新后的距离列表, 更新后的时间列表)
@@ -350,7 +348,7 @@ def update_distance_history(
     time_list.append(time.time())
 
     # 保留最近一段时间的记录
-    window = 1.7 + sprint_used * 1 - slow_mode * 0.4
+    window = 1.7 + sprint_used * 1
 
     while time_list[0] < time.time() - window:
         time_list = time_list[1:]

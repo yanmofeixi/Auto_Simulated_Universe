@@ -87,7 +87,6 @@ class UniverseUtils:
         self.last_info = ""
         self.mini_target = 0
         self.f_time = 0
-        self.slow = 0
         self.init_ang = 0
         self.allow_e = 1
         self.quan = 0
@@ -124,14 +123,13 @@ class UniverseUtils:
         return common_gen_hotkey_img(hotkey=hotkey, bg=bg)
 
     def press(self, c, t=0):
-        # 通用实现:保持 stop/allow_e/slow 语义与历史一致
+        # 通用实现
         return common_press_key(
             key=c,
             duration=t,
             log=log,
             keyops=keyops,
             allow_e=bool(self.allow_e),
-            slow_mode=bool(self.slow),
             stop_flag=lambda: self._stop,
         )
 
@@ -308,8 +306,9 @@ class UniverseUtils:
             threshold = self.threshold
         formatted_target_path = self.format_path(path)
         target = cv.imread(formatted_target_path)
-        if formatted_target_path == "./imgs/f.jpg" and config.mapping[0] != "f":
-            target = self.gen_hotkey_img(config.mapping[0])
+        if formatted_target_path == "./imgs/f.jpg":
+            # 使用默认的 f 键图片
+            pass
             threshold -= 0.01
 
         match = match_template_near_point(
@@ -468,7 +467,7 @@ class UniverseUtils:
         shape = (int(self.scx * 190), int(self.scx * 190))
         if gs:
             self.get_screen()
-u            if self.check("choose_blessing", 0.9266, 0.9491):
+            if self.check("choose_blessing", 0.9266, 0.9491):
                 return None
         if local_screen is None:
             local_screen = self.get_local(0.9333, 0.8657, shape)
@@ -852,7 +851,7 @@ u            if self.check("choose_blessing", 0.9266, 0.9491):
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while dtm[0] < time.time() - 1.7 + sft * 1 - self.slow * 0.4:
+                while dtm[0] < time.time() - 1.7 + sft * 1:
                     dtm = dtm[1:]
                     dls = dls[1:]
                 c += 1
@@ -1031,8 +1030,6 @@ u            if self.check("choose_blessing", 0.9266, 0.9491):
         self.real_loc = (int(x + 10 + dx), int(y + dy))
 
     def get_offset(self, delta=1):
-        if self.slow:
-            delta /= 2
         pi = 3.141592653589
         dx, dy = sin(self.ang / 180 * pi), cos(self.ang / 180 * pi)
         return (delta * dx * 3, delta * dy * 3)
@@ -1286,21 +1283,14 @@ u            if self.check("choose_blessing", 0.9266, 0.9491):
                 if self.goodf() and not (
                     self.ts.sim("黑塔") and time.time() - self.quit < 30
                 ):
-                    if self.speed <= 0 or not self.ts.sim("黑塔"):
-                        self.press("f")
-                        log.info("need_confirm " + self.ts.text)
-                        self.stop_move = 1
-                        need_confirm = 1
-                        if self.nof():
-                            keyops.keyUp("w")
-                            return
-                        break
-                    else:
-                        self.quit = time.time()
+                    self.press("f")
+                    log.info("need_confirm " + self.ts.text)
+                    self.stop_move = 1
+                    need_confirm = 1
+                    if self.nof():
                         keyops.keyUp("w")
-                        self.stop_move = 1
-                        self.mini_state += 2
                         return
+                    break
                 if self.check("auto_2", 0.0583, 0.0769):
                     keyops.keyUp("w")
                     self.stop_move = 1
@@ -1310,7 +1300,6 @@ u            if self.check("choose_blessing", 0.9266, 0.9491):
                     self.stop_move = 1
                     time.sleep(
                         1.7
-                        + self.slow * 1.1
                         - (self.quan and self.floor not in [3, 7, 12]) * 0.5
                     )
                     if (

@@ -4,12 +4,14 @@
 - 通用属性(multi, diffi)
 - 配置文件读写的基础逻辑
 - 按键映射处理
+- JSON 数据文件加载
 
 供 simul 和 diver 的 Config 类继承复用.
 """
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 from typing import Any, Dict, List, Optional, Union
@@ -30,16 +32,24 @@ class ConfigBase:
         allow_difficult (list): 允许的难度值列表
         timezones (list): 支持的时区列表
         timezone (str): 当前时区
-        origin_key (list): 原始按键映射
-        mapping (list): 当前按键映射
     """
+
+    # ===== 类常量 =====
+    DATA_DIR = "data"
+
+    # 默认配置常量 (从 data/defaults.json 加载)
+    DEFAULT_THRESHOLD = 0.97
+    DEFAULT_ACCURACY = 1440
+
+    # 数据文件缓存 (类级别)
+    _data_cache: Dict[str, Any] = {}
 
     def __init__(self):
         """初始化配置基类."""
         # 项目根目录
         self.abspath = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        if getattr(sys, 'frozen', False):
-            self.abspath = '.'
+        if getattr(sys, "frozen", False):
+            self.abspath = "."
 
         # 配置文件
         self.text = "info.yml"
@@ -50,12 +60,8 @@ class ConfigBase:
         self.allow_difficult = [1, 2, 3, 4, 5]
 
         # 时区设置
-        self.timezones = ['America', 'Asia', 'Europe', 'Default']
-        self.timezone = 'Default'
-
-        # 按键映射
-        self.origin_key = ['f', 'm', 'shift', 'v', 'e', 'w', 'a', 's', 'd', '1', '2', '3', '4']
-        self.mapping = self.origin_key.copy()
+        self.timezones = ["America", "Asia", "Europe", "Default"]
+        self.timezone = "Default"
 
     @property
     def multi(self) -> float:
@@ -73,7 +79,7 @@ class ConfigBase:
         """
         x = float(self.angle)
         if x > 5:
-            self.angle = '1.0'
+            self.angle = "1.0"
             return 1.0
         elif x > 2:
             return x - 2
@@ -108,7 +114,7 @@ class ConfigBase:
         """
         config_path = self.get_config_path()
         if os.path.exists(config_path):
-            with open(config_path, "r", encoding="utf-8", errors='ignore') as f:
+            with open(config_path, "r", encoding="utf-8", errors="ignore") as f:
                 return yaml.safe_load(f) or {}
         return {}
 
@@ -131,19 +137,9 @@ class ConfigBase:
         if not config_data:
             return
 
-        self.angle = str(config_data.get('angle', self.angle))
-        self.difficult = str(config_data.get('difficulty', self.difficult))
-        self.timezone = str(config_data.get('timezone', self.timezone))
-
-    def read_key_mapping(self, data: Dict[str, Any]) -> None:
-        """读取按键映射配置.
-
-        Args:
-            data: 完整配置字典
-        """
-        mapping_value = data.get('key_mapping')
-        if isinstance(mapping_value, list) and mapping_value:
-            self.mapping = [str(x) for x in mapping_value]
+        self.angle = str(config_data.get("angle", self.angle))
+        self.difficult = str(config_data.get("difficulty", self.difficult))
+        self.timezone = str(config_data.get("timezone", self.timezone))
 
     def read(self) -> None:
         """读取配置文件.
@@ -152,9 +148,8 @@ class ConfigBase:
         """
         data = self.load_yaml()
         if data:
-            config_data = data.get('config', {})
+            config_data = data.get("config", {})
             self.read_common_config(config_data)
-            self.read_key_mapping(data)
         else:
             self.save()
 
@@ -164,3 +159,177 @@ class ConfigBase:
         子类应重写此方法以添加特定配置项的保存.
         """
         raise NotImplementedError("子类必须实现 save 方法")
+
+    # ===== JSON 数据文件加载 =====
+
+    @classmethod
+    def _get_project_root(cls) -> str:
+        """获取项目根目录.
+
+        Returns:
+            项目根目录路径
+        """
+        if getattr(sys, "frozen", False):
+            return "."
+        return os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
+    @classmethod
+    def load_data_file(cls, filename: str) -> Dict[str, Any]:
+        """加载 JSON 数据文件.
+
+        支持缓存,避免重复读取.
+
+        Args:
+            filename: 数据文件名(相对于 data 目录)
+
+        Returns:
+            解析后的 JSON 数据
+
+        Raises:
+            FileNotFoundError: 文件不存在
+            json.JSONDecodeError: JSON 解析失败
+        """
+        if filename in cls._data_cache:
+            return cls._data_cache[filename]
+
+        path = os.path.join(cls._get_project_root(), cls.DATA_DIR, filename)
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            cls._data_cache[filename] = data
+            return data
+
+    @classmethod
+    def clear_data_cache(cls) -> None:
+        """清除数据文件缓存.
+
+        用于测试或需要强制重新加载数据时.
+        """
+        cls._data_cache.clear()
+
+    @classmethod
+    def get_default_threshold(cls) -> float:
+        """获取默认阈值.
+
+        Returns:
+            默认阈值
+
+        Raises:
+            KeyError: 如果 defaults.json 中缺少 threshold 字段
+        """
+        defaults = cls.load_data_file("defaults.json")
+        return float(defaults["threshold"])
+
+    @classmethod
+    def get_default_accuracy(cls) -> int:
+        """获取默认精确度.
+
+        Returns:
+            默认精确度
+
+        Raises:
+            KeyError: 如果 defaults.json 中缺少 accuracy 字段
+        """
+        defaults = cls.load_data_file("defaults.json")
+        return int(defaults["accuracy"])
+
+    @classmethod
+    def get_default_config(cls) -> Dict[str, Any]:
+        """获取默认配置.
+
+        Returns:
+            defaults.json 中的配置数据
+
+        Raises:
+            FileNotFoundError: 如果 defaults.json 不存在
+            json.JSONDecodeError: 如果 JSON 解析失败
+        """
+        return cls.load_data_file("defaults.json")
+
+    # ===== OCR 默认词表 =====
+
+    @classmethod
+    def get_ocr_defaults(cls) -> Dict[str, Any]:
+        """获取 OCR 默认词表.
+
+        Returns:
+            ocr_defaults.json 中的数据
+
+        Raises:
+            FileNotFoundError: 如果 ocr_defaults.json 不存在
+            json.JSONDecodeError: 如果 JSON 解析失败
+        """
+        return cls.load_data_file("ocr_defaults.json")
+
+    @classmethod
+    def get_fates(cls) -> List[str]:
+        """获取命途列表.
+
+        Returns:
+            命途名称列表
+        """
+        defaults = cls.get_ocr_defaults()
+        return list(defaults["fates"])
+
+    @classmethod
+    def get_prior_blessing(cls) -> List[str]:
+        """获取优先祝福列表.
+
+        Returns:
+            优先祝福名称列表
+        """
+        defaults = cls.get_ocr_defaults()
+        return list(defaults["prior_blessing"])
+
+    @classmethod
+    def get_secondary_fates(cls) -> List[str]:
+        """获取次要命途列表.
+
+        Returns:
+            次要命途名称列表
+        """
+        defaults = cls.get_ocr_defaults()
+        return list(defaults["secondary_fates"])
+
+    @classmethod
+    def get_curio(cls) -> List[str]:
+        """获取奇物列表.
+
+        Returns:
+            奇物名称列表
+        """
+        defaults = cls.get_ocr_defaults()
+        return list(defaults["curio"])
+
+    @classmethod
+    def get_blessings_by_fate(cls) -> List[List[str]]:
+        """获取按命途分类的祝福列表.
+
+        Returns:
+            各命途的祝福列表
+        """
+        defaults = cls.get_ocr_defaults()
+        return [list(items) for items in defaults["blessings_by_fate"]]
+
+    @classmethod
+    def get_interacts(cls, mode: str = "simul") -> List[str]:
+        """获取交互关键词列表.
+
+        Args:
+            mode: 模式 ("simul" 或 "diver")
+
+        Returns:
+            交互关键词列表
+        """
+        defaults = cls.get_ocr_defaults()
+        key = f"interacts_{mode}"
+        return list(defaults[key])
+
+    @classmethod
+    def get_blessing_blacklist(cls) -> List[str]:
+        """获取祝福黑名单.
+
+        Returns:
+            应跳过的祝福名称列表
+        """
+        defaults = cls.get_ocr_defaults()
+        return list(defaults["blessing_blacklist"])

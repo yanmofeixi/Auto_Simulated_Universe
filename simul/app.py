@@ -25,33 +25,19 @@ def main(argv: Optional[List[str]] = None) -> None:
     parsed_args = parse_args(argv)
 
     # 兼容旧行为:未显式传入的选项,从配置文件读取默认值.
-    speed = config.speed_mode if parsed_args.speed is None else int(parsed_args.speed)
     consumable = (
         config.use_consumable if parsed_args.consumable is None else int(parsed_args.consumable)
     )
-    slow = config.slow_mode if parsed_args.slow is None else int(parsed_args.slow)
-    bonus = bool(config.bonus) if parsed_args.bonus is None else bool(int(parsed_args.bonus))
 
     find = int(parsed_args.find)
-    debug = int(parsed_args.debug)
-    show_map = int(parsed_args.show_map)
-    update = int(parsed_args.update)
     unlock = bool(parsed_args.unlock)
 
-    log.info(
-        f"find: {find}, debug: {debug}, show_map: {show_map}, consumable: {consumable}"
-    )
+    log.info(f"find: {find}, consumable: {consumable}")
 
     universe = SimulatedUniverse(
         find,
-        debug,
-        show_map,
-        speed,
         consumable,
-        slow,
         unlock=unlock,
-        bonus=bonus,
-        update=update,
     )
 
     try:

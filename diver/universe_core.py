@@ -199,7 +199,7 @@ class DivergentUniverse(UniverseUtils):
         self.event_text = ""  # 当前事件文本
 
         # ===== 战斗配置 =====
-        self.long_range = "1"  # 远程角色槽位,默认 1 号位
+        self.long_range = config.default_long_range_slot  # 远程角色槽位,默认从 config 读取
 
         # ===== 首领房统计 =====
         self.boss_counted = False  # 当前首领房是否已计入统计
@@ -214,7 +214,7 @@ class DivergentUniverse(UniverseUtils):
         notif("开始运行", f"初始计数:{self.count}")
 
     def route(self):
-        self.threshold = 0.97
+        self.threshold = config.default_threshold
         self.is_get_team = True  # 启动后重置状态
         while True:
             if self._stop:

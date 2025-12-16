@@ -5,14 +5,8 @@ from utils.common.ocr_utils import (
     is_edit_distance_at_most_one as _is_edit_distance_at_most_one,
 )
 from utils.log import log
-from utils.ocr_defaults import (
-    BLESSINGS_BY_FATE,
-    DEFAULT_CURIO,
-    DEFAULT_PRIOR_BLESSING,
-    DEFAULT_SECONDARY_FATES,
-    FATES,
-)
 from utils.onnxocr.onnx_paddleocr import ONNXPaddleOcr
+from simul.config import config as simul_config
 
 # mode: blessing1 blessing2 curio
 
@@ -84,6 +78,8 @@ class My_TS:
         rcx, rcy, find, black = -1, -1, 0, 0
         res = ""
         text_res = "."
+        # 从 config 获取祝福黑名单
+        blessing_blacklist = simul_config.get_blessing_blacklist()
         for c, contour in enumerate(contours):
             x, y, w, h = cv.boundingRect(contour)
             if h == binary_image.shape[0] or w < 55:
@@ -97,8 +93,9 @@ class My_TS:
             if find == 0:
                 rcx, rcy, find, text_res = cx, cy, 1, self.text + ";"
             res += "|" + self.text
+            # 检查是否在黑名单中
             if (self.sim("回归不等式") and blessing_skip) or self.sim_list(
-                ["银河大乐透", "普通八卦", "愚者面具", "机械齿轮"]
+                blessing_blacklist[1:]  # 跳过 "回归不等式"
             ) is not None:
                 black = 1
                 res += "x"
@@ -139,39 +136,32 @@ class My_TS:
 class text_keys:
     def __init__(self, fate=4):
         self.fate = fate
-        self.interacts = [
-            "黑塔",
-            "区域",
-            "事件",
-            "退出",
-            "沉浸",
-            "紧锁",
-            "复活",
-            "下载",
-            "模拟",
-        ]
-        self.fates = list(FATES)
-        self.prior_blessing = list(DEFAULT_PRIOR_BLESSING)
-        self.curio = list(DEFAULT_CURIO)
-        self.blessings = [list(items) for items in BLESSINGS_BY_FATE]
-        self.secondary = list(DEFAULT_SECONDARY_FATES)
-        try:
-            import yaml
+        # 从 config 加载所有词表
+        self.interacts = simul_config.get_interacts("simul")
+        self.fates = simul_config.get_fates()
+        self.prior_blessing = simul_config.get_prior_blessing()
+        self.curio = simul_config.get_curio()
+        self.blessings = simul_config.get_blessings_by_fate()
+        self.secondary = simul_config.get_secondary_fates()
 
-            with open("info.yml", "r", encoding="utf-8", errors="ignore") as f:
-                config = yaml.safe_load(f)["prior"]
-            with open("info.yml", "r", encoding="utf-8", errors="ignore") as f:
-                try:
-                    self.secondary = yaml.safe_load(f)["config"]["secondary_fate"]
-                except:
-                    pass
-            for i, j in enumerate(config):
-                if i > 1:
-                    self.blessings[i - 2] = config[j]
-                elif i == 0:
-                    self.curio = config[j]
-        except:
-            pass
+        # 从 config 读取用户配置，覆盖默认值
+        data = simul_config.load_yaml()
+        if data:
+            prior = data.get("prior")
+            try:
+                secondary_override = data.get("config", {}).get("secondary_fate")
+                if isinstance(secondary_override, list):
+                    self.secondary = secondary_override
+            except Exception:
+                pass
+
+            if isinstance(prior, dict):
+                for i, key in enumerate(prior):
+                    if i > 1:
+                        self.blessings[i - 2] = prior[key]
+                    elif i == 0:
+                        self.curio = prior[key]
+
         self.prior_blessing += self.blessings[fate]
         self.skip = 1
         for s in self.prior_blessing:

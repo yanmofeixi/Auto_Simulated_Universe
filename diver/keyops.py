@@ -2,34 +2,12 @@
 
 from __future__ import annotations
 
-from typing import List
-
-from diver.config import config
-
 from utils.common.keyops import KeyController as _KeyController
-from utils.common.keyops import get_mapping as _get_mapping
-from utils.common.keyops import key_down as _key_down
-from utils.common.keyops import key_up as _key_up
+from utils.common.keyops import key_down as keyDown
+from utils.common.keyops import key_up as keyUp
 
-def get_mapping(key: str) -> str:
-    """将逻辑按键映射为实际按键."""
+__all__ = ["keyDown", "keyUp", "KeyController"]
 
-    return _get_mapping(key, origin_key=config.origin_key, mapping=config.mapping)
-
-def keyDown(key: str) -> None:
-    """按下按键(带映射)."""
-
-    _key_down(key, origin_key=config.origin_key, mapping=config.mapping)
-
-
-def keyUp(key: str) -> None:
-    """松开按键(带映射)."""
-
-    _key_up(
-        key,
-        origin_key=config.origin_key,
-        mapping=config.mapping,
-    )
 
 class KeyController(_KeyController):
     """差分宇宙按键控制器,封装按键操作."""
