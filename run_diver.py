@@ -7,14 +7,16 @@
 
 import sys
 
-import pyuac
-
-from diver.app import main
-
-
 if __name__ == "__main__":
-    # 如果传入 --elevated 参数，跳过 UAC 检查（已经是管理员）
-    if "--elevated" in sys.argv or pyuac.isUserAdmin():
+    # 如果传入 --elevated 参数，直接运行（已从 GUI 以管理员身份启动）
+    if "--elevated" in sys.argv:
+        from diver.app import main
         main()
     else:
-        pyuac.runAsAdmin()
+        # 需要检查管理员权限
+        import pyuac
+        if pyuac.isUserAdmin():
+            from diver.app import main
+            main()
+        else:
+            pyuac.runAsAdmin()
