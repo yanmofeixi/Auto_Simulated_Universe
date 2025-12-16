@@ -5,9 +5,10 @@ from PIL import Image
 from pystray import Icon, MenuItem as item
 import threading
 import sys
-import os
 from winotify import Notification
-import psutil
+
+from utils.common.notif_file import read_notif_file
+from utils.common.notif_file import write_notif_file
 
 def notif(title,msg):
     Notification(app_id="椰羊自动化",title=title,msg=msg,icon=os.getcwd() + "\\imgs\\icon.png").show()
@@ -17,30 +18,29 @@ def exit_program(icon, item):
     os._exit(0)
 
 def maopao(icon=None, item=None):
-    file_name = 'logs/notif.txt'
-    cnt='0'
-    tm=None
-    if os.path.exists(file_name):
-        with open(file_name, 'r', encoding="utf-8",errors='ignore') as file:
-            s=file.readlines()
-            cnt=s[0].strip('\n')
-            try:
-                tm=s[3].strip('\n')
-            except:
-                pass
-    if tm is None:
+    cnt, _title, _msg, tm = read_notif_file(file_name="logs/notif.txt")
+    if not cnt:
+        cnt = "0"
+    if not tm:
         tm = str(time.time())
-    os.makedirs('logs',exist_ok=1)
-    with open(file_name, 'w', encoding="utf-8") as file:
-        file.write(f"{cnt}\n喵\n计数:{cnt}\n{tm}")
+
+    write_notif_file(
+        title="喵",
+        msg=f"计数:{cnt}",
+        cnt=cnt,
+        tm=tm,
+        file_name="logs/notif.txt",
+    )
 
 
 def clear(icon=None, item=None):
-    file_name = 'logs/notif.txt'
-    tm = time.time()
-    if os.path.exists(file_name):
-        with open(file_name, 'w', encoding="utf-8",errors='ignore') as file:
-            file.write('0\n清零\n计数:0\n{tm}')
+    write_notif_file(
+        title="清零",
+        msg="计数:0",
+        cnt="0",
+        tm=str(time.time()),
+        file_name="logs/notif.txt",
+    )
             
 def notify():
     file_name = 'logs/notif.txt'

@@ -19,19 +19,19 @@ def get_angle(su, safe):
     return su.get_now_direc(local_screen)
 
 
-# 不同电脑鼠标移动速度、放缩比、分辨率等不同，因此需要校准
-# 基本逻辑：每次转60度，然后计算实际转了几度，计算出误差比
+# 不同电脑鼠标移动速度、放缩比、分辨率等不同,因此需要校准
+# 基本逻辑:每次转60度,然后计算实际转了几度,计算出误差比
 def main(cnt=10, safe=0, ang=[1,1,3], su=None):
     if su is None or 'Diver' in su.__class__.__name__:
-        from utils.diver.config import config
+        from diver.config import config
     else:
-        from utils.simul.config import config
+        from simul.config import config
     if float(config.angle)>2 and len(ang)<3 and su is not None:
         su.multi = config.multi
         return
     log.info("开始校准")
     if su is None:
-        from utils.simul.utils import UniverseUtils
+        from simul.utils import UniverseUtils
         su = UniverseUtils()
     su.multi = 1
     init_ang = get_angle(su, safe)
@@ -68,7 +68,7 @@ def main(cnt=10, safe=0, ang=[1,1,3], su=None):
     config.angle = str(su.multi+len(ang)-1)
     config.save()
     if su is None:
-        from utils.simul.config import config
+        from simul.config import config
         config.angle = str(su.multi+len(ang)-1)
         config.save()
     log.info("校准完成")

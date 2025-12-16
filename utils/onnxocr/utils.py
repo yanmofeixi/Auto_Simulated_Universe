@@ -4,7 +4,7 @@ import argparse
 import math
 from PIL import Image, ImageDraw, ImageFont
 import os
-from utils.diver.config import config
+from diver.config import config
 abspath = os.path.dirname(os.path.dirname(os.path.dirname(__file__))) + '/'
 
 def get_rotate_crop_image(img, points):
@@ -230,7 +230,6 @@ def infer_args():
     parser.add_argument("--use_xpu", type=str2bool, default=False)
     parser.add_argument("--use_npu", type=str2bool, default=False)
     parser.add_argument("--ir_optim", type=str2bool, default=True)
-    parser.add_argument("--use_tensorrt", type=str2bool, default=False)
     parser.add_argument("--min_subgraph_size", type=int, default=15)
     parser.add_argument("--precision", type=str, default="fp32")
     parser.add_argument("--gpu_mem", type=int, default=500)

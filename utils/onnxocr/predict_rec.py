@@ -3,6 +3,16 @@ import numpy as np
 import math
 from PIL import Image
 
+# Pillow 10+：推荐使用 Image.Resampling；旧版本保留常量。
+try:
+    from PIL.Image import Resampling as _PILResampling
+
+    _PIL_BICUBIC = _PILResampling.BICUBIC
+    _PIL_LANCZOS = _PILResampling.LANCZOS
+except Exception:
+    _PIL_BICUBIC = getattr(Image, "BICUBIC", 3)
+    _PIL_LANCZOS = getattr(Image, "LANCZOS", getattr(Image, "ANTIALIAS", 1))
+
 
 from .rec_postprocess import CTCLabelDecode
 from .predict_base import PredictBase
@@ -13,9 +23,10 @@ class TextRecognizer(PredictBase):
         self.rec_image_shape = [int(v) for v in args.rec_image_shape.split(",")]
         self.rec_batch_num = args.rec_batch_num
         self.rec_algorithm = args.rec_algorithm
+        self.inverse = getattr(args, "rec_image_inverse", False)
         self.postprocess_op = CTCLabelDecode(character_dict_path=args.rec_char_dict_path, use_space_char=args.use_space_char)
 
-        # 初始化模型
+        # 初始化模型（CUDA 优先）
         self.rec_onnx_session = self.get_onnx_session(args.rec_model_dir, args.use_gpu)
         self.rec_input_name = self.get_input_name(self.rec_onnx_session)
         self.rec_output_name = self.get_output_name(self.rec_onnx_session)
@@ -28,9 +39,9 @@ class TextRecognizer(PredictBase):
             # return padding_im
             image_pil = Image.fromarray(np.uint8(img))
             if self.rec_algorithm == 'ViTSTR':
-                img = image_pil.resize([imgW, imgH], Image.BICUBIC)
+                img = image_pil.resize([imgW, imgH], _PIL_BICUBIC)
             else:
-                img = image_pil.resize([imgW, imgH], Image.ANTIALIAS)
+                img = image_pil.resize([imgW, imgH], _PIL_LANCZOS)
             img = np.array(img)
             norm_img = np.expand_dims(img, -1)
             norm_img = norm_img.transpose((2, 0, 1))
@@ -199,7 +210,7 @@ class TextRecognizer(PredictBase):
     def resize_norm_img_spin(self, img):
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         # return padding_im
-        img = cv2.resize(img, tuple([100, 32]), cv2.INTER_CUBIC)
+        img = cv2.resize(img, (100, 32), interpolation=cv2.INTER_CUBIC)
         img = np.array(img, np.float32)
         img = np.expand_dims(img, -1)
         img = img.transpose((2, 0, 1))

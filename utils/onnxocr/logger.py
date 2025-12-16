@@ -32,8 +32,8 @@ class Logger:
             '''
 【%(levelname)s】 %(asctime)s
 %(message)s
-    文件：%(module)s | 函数：%(funcName)s | 行号：%(lineno)d
-    线程id：%(thread)d | 线程名：%(thread)s''')
+    文件:%(module)s | 函数:%(funcName)s | 行号:%(lineno)d
+    线程id:%(thread)d | 线程名:%(thread)s''')
         fileHandler.setFormatter(formatFile)
         self.logger.addHandler(fileHandler)
 

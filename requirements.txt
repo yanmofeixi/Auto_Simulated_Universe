@@ -1,23 +1,33 @@
-opencv_python
-PyAutoGUI
-pywin32
-flet==0.23.2
-flet_core==0.23.2
-pyinstaller
-pyuac
-pillow
-keyboard
-requests
-onnxruntime-directml
-shapely
-pyclipper
+# 核心依赖
+opencv-python>=4.8.0
+PyAutoGUI>=0.9.54
+pywin32>=305
+pyinstaller>=6.0
+pyuac>=0.0.3
+pillow>=10.0.0
+keyboard>=0.13.5
+requests>=2.31.0
+shapely>=2.0
+pyclipper>=1.3.0
 pyscreeze==0.1.28
-tzdata
-tzlocal
-pytz
-pyyaml
-winotify
-pystray
-psutil
-mss
-numpy==1.26.4
+tzdata>=2024.1
+tzlocal>=5.0
+pytz>=2024.1
+pyyaml>=6.0.1
+winotify>=1.0.0
+pystray>=0.19.5
+mss>=9.0.1
+
+# 数值计算 - 针对 Python 3.13+ 优化
+numpy>=2.0.0
+
+# OCR 推理引擎：CUDA (NVIDIA)
+# 说明：
+# - 本项目当前不再使用 TensorRT，仅使用 CUDAExecutionProvider。
+# - Python 3.13 下请使用支持 CUDA 13 的 onnxruntime-gpu（nightly）。
+onnxruntime-gpu==1.24.0.dev20251215001
+
+# CUDA 运行库（来自 NVIDIA PyPI 源 https://pypi.nvidia.com）
+nvidia-cuda-runtime==13.0.88
+nvidia-cublas==13.2.0.9
+nvidia-cudnn-cu13==9.17.0.29

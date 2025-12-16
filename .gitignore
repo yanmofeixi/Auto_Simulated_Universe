@@ -24,6 +24,7 @@ imgs/tmp5.jpg
 imgs/tmp6.jpg
 imgs/collect
 logs/
+!logs/window_debug.log
 my_map
 .notif
 check0.txt
@@ -31,7 +32,6 @@ check5.txt
 *.zip
 ocr/
 info.yml
-info_old.yml
 version.txt
 *.exe
 test.py

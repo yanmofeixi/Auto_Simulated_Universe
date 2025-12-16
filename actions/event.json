@@ -1,0 +1,1508 @@
+[
+  {
+    "name": "占",
+    "priority": "最近能发财",
+    "secondary": "最近有危险",
+    "avoid": "旅程会顺利"
+  },
+  {
+    "name": "虫巢",
+    "priority": "不要随意押注",
+    "secondary": "",
+    "avoid": "深入虫巢"
+  },
+  {
+    "name": "超验",
+    "priority": "点亮-随机",
+    "secondary": "点亮-随机",
+    "avoid": "战斗"
+  },
+  {
+    "name": "互动艺术",
+    "priority": "我加入你们-动作片",
+    "secondary": "我加入你们-动作片",
+    "avoid": ""
+  },
+  {
+    "name": "电视购物频道",
+    "priority": "花费50宇宙碎片-离开这里",
+    "secondary": "花费100宇宙碎片-你不感兴趣",
+    "avoid": "损失40当前生命值"
+  },
+  {
+    "name": "完美大挑战",
+    "priority": "走开",
+    "secondary": "走开",
+    "avoid": "花费"
+  },
+  {
+    "name": "游牧矿工",
+    "priority": "恩赐",
+    "secondary": "存护",
+    "avoid": ""
+  },
+  {
+    "name": "虚构史学家",
+    "priority": "获得3个-获得2个",
+    "secondary": "获得3个-获得2个",
+    "avoid": "离开"
+  },
+  {
+    "name": "杰姆哈克与杰姆哈尔",
+    "priority": "150-2星祝福",
+    "secondary": "2星祝福",
+    "avoid": ""
+  },
+  {
+    "name": "焚化工",
+    "priority": "将一切奉献",
+    "secondary": "将一切奉献",
+    "avoid": ""
+  },
+  {
+    "name": "像素世界",
+    "priority": "200宇宙碎片",
+    "secondary": "存护祝福",
+    "avoid": "随机祝福"
+  },
+  {
+    "name": "像素世界隐藏关",
+    "priority": "方程所需-3星方程",
+    "secondary": "方程所需-3星方程",
+    "avoid": ""
+  },
+  {
+    "name": "阿哈玩偶",
+    "priority": "轻轻拍",
+    "secondary": "轻轻拍",
+    "avoid": ""
+  },
+  {
+    "name": "谢债发行机",
+    "priority": "摧毁",
+    "secondary": "",
+    "avoid": "150"
+  },
+  {
+    "name": "雕像",
+    "priority": "50",
+    "secondary": "",
+    "avoid": "80-99"
+  },
+  {
+    "name": "三只小猪",
+    "priority": "进入三只扑满的房间",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "无尽黑暗",
+    "priority": "对抗引力",
+    "secondary": "对抗引力",
+    "avoid": "负面奇物-巨大黑网"
+  },
+  {
+    "name": "筑城者",
+    "priority": "奇物-碎片",
+    "secondary": "奇物",
+    "avoid": ""
+  },
+  {
+    "name": "自灭者的火种",
+    "priority": "强化4",
+    "secondary": "",
+    "avoid": "负面奇物"
+  },
+  {
+    "name": "社会性梦境",
+    "priority": "获得150",
+    "secondary": "获得300",
+    "avoid": ""
+  },
+  {
+    "name": "赏金猎人",
+    "priority": "你没有兴趣",
+    "secondary": "",
+    "avoid": "1个-5个"
+  },
+  {
+    "name": "我们是牛仔",
+    "priority": "与他们-付钱",
+    "secondary": "与他们-付钱",
+    "avoid": ""
+  },
+  {
+    "name": "尼尔迪斯牌",
+    "priority": "放弃",
+    "secondary": "",
+    "avoid": "翻开牌"
+  },
+  {
+    "name": "猜拳游戏",
+    "priority": "你想起了它的规律-敏锐察觉星体",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "酒馆",
+    "priority": "揭穿他破产",
+    "secondary": "揭穿他破产",
+    "avoid": "撕下他的面具"
+  },
+  {
+    "name": "周期性大魔王",
+    "priority": "在4个轮内",
+    "secondary": "",
+    "avoid": "坚持4轮"
+  },
+  {
+    "name": "来交换礼物吧",
+    "priority": "方程覆写",
+    "secondary": "舍弃1个1",
+    "avoid": "离开"
+  },
+  {
+    "name": "许个愿吧",
+    "priority": "离开",
+    "secondary": "战斗",
+    "avoid": "99"
+  },
+  {
+    "name": "机器人销售终端",
+    "priority": "离开",
+    "secondary": "100",
+    "avoid": "99"
+  },
+  {
+    "name": "天外大合唱",
+    "priority": "听一听",
+    "secondary": "",
+    "avoid": "不要"
+  },
+  {
+    "name": "纯美骑士的帮助",
+    "priority": "波美茵",
+    "secondary": "维尔迦娜",
+    "avoid": "加莱哈德伊坎"
+  },
+  {
+    "name": "天才俱乐部",
+    "priority": "加入糖-轻轻搅拌-碎片",
+    "secondary": "加入糖-轻轻搅拌-碎片",
+    "avoid": "加入牙膏"
+  },
+  {
+    "name": "兽群贪饕灾厄",
+    "priority": "幼兽",
+    "secondary": "",
+    "avoid": "巨兽"
+  },
+  {
+    "name": "奇物修理专家",
+    "priority": "50-所有奇物",
+    "secondary": "50-所有奇物",
+    "avoid": "随机奇物"
+  },
+  {
+    "name": "伶人戏法",
+    "priority": "2星祝福",
+    "secondary": "3星祝福",
+    "avoid": ""
+  },
+  {
+    "name": "掏垃圾桶大师",
+    "priority": "不感兴趣",
+    "secondary": "获得3个损毁的奇物",
+    "avoid": "舍弃1个奇物"
+  },
+  {
+    "name": "寰宇舞者的启示",
+    "priority": "抽签",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "奇物黑客",
+    "priority": "有机心脏-神秘磁力",
+    "secondary": "有机心脏-神秘磁力",
+    "avoid": "离开"
+  },
+  {
+    "name": "火漆制造机",
+    "priority": "熔铸-祝福",
+    "secondary": "熔铸-祝福",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平投资机器",
+    "priority": "克制",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "危险投喂",
+    "priority": "1个-2个",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "归来的岁阳",
+    "priority": "输了可别",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "厨王争霸",
+    "priority": "一起上吧-最多3个",
+    "secondary": "",
+    "avoid": "跨级挑战评委"
+  },
+  {
+    "name": "三进制战争",
+    "priority": "进入战斗",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "和谐比赛",
+    "priority": "掏出球棒",
+    "secondary": "掏出球棒",
+    "avoid": ""
+  },
+  {
+    "name": "双乐透体验",
+    "priority": "拒绝",
+    "secondary": "",
+    "avoid": "花费100宇宙碎片-花费50宇宙碎片"
+  },
+  {
+    "name": "帝国遗产",
+    "priority": "归还帝国-触摸帝国",
+    "secondary": "归还帝国-触摸帝国",
+    "avoid": "接受帝国"
+  },
+  {
+    "name": "虫潮沉睡领主一级",
+    "priority": "绕路",
+    "secondary": "",
+    "avoid": "进入一场虫群战斗-失去奇物"
+  },
+  {
+    "name": "虫潮沉睡领主二级",
+    "priority": "保持绝对",
+    "secondary": "",
+    "avoid": "进入一场虫群战斗-失去奇物"
+  },
+  {
+    "name": "虫潮沉睡领主三级",
+    "priority": "立刻后退",
+    "secondary": "立刻后退",
+    "avoid": "清理它们-失去奇物"
+  },
+  {
+    "name": "星际和平机械分部商城其一",
+    "priority": "测不准匣",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平机械分部商城其二",
+    "priority": "测不准匣",
+    "secondary": "",
+    "avoid": "海绵王-果实"
+  },
+  {
+    "name": "作弊代码其一",
+    "priority": "200",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "作弊代码其二",
+    "priority": "被迫战斗",
+    "secondary": "被迫战斗",
+    "avoid": ""
+  },
+  {
+    "name": "咕咕钟狂热粉丝其一",
+    "priority": "拒绝",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "咕咕钟狂热粉丝其二",
+    "priority": "舍弃",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "咕咕钟狂热粉丝其三",
+    "priority": "相同数量祝福-再接受一只",
+    "secondary": "相同数量祝福-再接受一只",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平公司升职记其一",
+    "priority": "精准地-200-加班",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平公司升职记其二",
+    "priority": "派对-会议-培训",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平公司升职记其三",
+    "priority": "星际演讲",
+    "secondary": "星际演讲",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平公司升职记其四",
+    "priority": "获得2个1星方程",
+    "secondary": "200-无尽权力",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平银行其一",
+    "priority": "走开",
+    "secondary": "100",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平银行其二",
+    "priority": "取出-走开",
+    "secondary": "走开",
+    "avoid": ""
+  },
+  {
+    "name": "孤独太空美虫模拟宇宙其一",
+    "priority": "舍弃100-祝福",
+    "secondary": "",
+    "avoid": "奇物"
+  },
+  {
+    "name": "孤独太空美虫模拟宇宙其二",
+    "priority": "生命",
+    "secondary": "随机奇物",
+    "avoid": "拒绝"
+  },
+  {
+    "name": "萨里其一",
+    "priority": "全部角色各自损失",
+    "secondary": "全部角色各自损失",
+    "avoid": "舍弃1个奇物"
+  },
+  {
+    "name": "萨里其二",
+    "priority": "出来",
+    "secondary": "出来",
+    "avoid": ""
+  },
+  {
+    "name": "萨里其三",
+    "priority": "让萨里出来",
+    "secondary": "让萨里出来",
+    "avoid": ""
+  },
+  {
+    "name": "里奥其一",
+    "priority": "全部角色各自损失",
+    "secondary": "全部角色各自损失",
+    "avoid": "舍弃1个奇物"
+  },
+  {
+    "name": "里奥其二",
+    "priority": "出来",
+    "secondary": "出来",
+    "avoid": ""
+  },
+  {
+    "name": "里奥其三",
+    "priority": "让萨里出来",
+    "secondary": "让萨里出来",
+    "avoid": ""
+  },
+  {
+    "name": "银河商人其一",
+    "priority": "100",
+    "secondary": "",
+    "avoid": "走开"
+  },
+  {
+    "name": "银河忽悠其二",
+    "priority": "50",
+    "secondary": "200",
+    "avoid": "走开"
+  },
+  {
+    "name": "银河好人其三",
+    "priority": "10",
+    "secondary": "",
+    "avoid": "走开"
+  },
+  {
+    "name": "阮梅",
+    "priority": "就是-信仰星神",
+    "secondary": "想要很多钱",
+    "avoid": ""
+  },
+  {
+    "name": "阮梅其二",
+    "priority": "就是-信仰星神",
+    "secondary": "就是-信仰星神",
+    "avoid": ""
+  },
+  {
+    "name": "阮梅其三",
+    "priority": "想象力-给螺丝",
+    "secondary": "想象力-给螺丝",
+    "avoid": ""
+  },
+  {
+    "name": "迷宫双门",
+    "priority": "离开",
+    "secondary": "离开",
+    "avoid": "离开"
+  },
+  {
+    "name": "昔涟",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "巨狮竞技",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "出手时机",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "镜里逃生",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "观星机器",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "英雄的诞生",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "腐败交易",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "祈祷正匆忙",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "生命分岔",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "海之声",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "沉吟者",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "棋中戏",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "多洛斯骰子",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "冒牌眷属",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "骇客与水手",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "缄默之殿",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "妙笔生花",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "多数派报告",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "占卜",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "人生如菜",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "速度与引擎",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "愚人船",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "培养皿",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "修补匠",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "选择困难",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "跳蚤市场",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "语义不符",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "菠萝面包",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "联名产品",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "红色诱惑",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "特别优惠",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "熔岩",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "时间银行",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "垃圾交响曲",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "垂钓仪式",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "像你这样的苍猿",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "一抹色彩",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "阮•梅",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "谢债",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "认知理发馆",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "银河商人",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "超验之镜",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虫群",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "纯美骑士",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "太空美虫",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "咕咕钟",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "兽群",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "像素",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "余清涂",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "萨里奥",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "升序排列",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "运输任务",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "驭兽缰盘",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "贤人之路（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "贤人之路（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "贤人之路（其三）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "棉花糖号",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "飞向高天Ⅰ型",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "飞向高天Ⅱ型",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "飞向高天Ⅲ型",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "异种收容",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "愿望天平",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "许愿托盘",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "神启石镜",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "英雄的诞生（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "英雄的诞生（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "英雄的诞生（其三）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "生命分岔（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "生命分岔（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "沉吟圆盘",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "成功的标准比",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "销售蓝海",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "假未来",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "奥塔牌",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "人生如菜（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "人生如菜（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "人生如菜（其三）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "云骑骁卫•彦卿",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "步离战首•呼雷",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "商店街一番战",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "闪耀的偏方三八面骰",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "修补匠（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "修补匠（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "选择困难（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "选择困难（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "菠萝",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "时间银行（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "时间银行（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "金属生活",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "阮•梅（其三）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "鲁珀特帝国差分机",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "塔奥牌",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平机械分部商城（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "信息",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "仅在黄金与机械中满足 -30 ≤ 认知 ≤ 0 时出现。",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "香涎干酪",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "测不准匣",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "异木果实",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平机械分部商城（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "海绵王",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "猜不透匣",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "腐化异木果实",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "机械城「认知理发馆」- 机械咕母",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "机械城「认知理发馆」- 博识学会",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "机械城「认知理发馆」- 天才俱乐部",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "作弊代码（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "作弊代码（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "「有机心脏」",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "「神秘」磁力",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "*完美*大挑战！",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "阮•梅（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "超验之镜（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "超验之镜（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "超验之镜（其三）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平公司「升职记」（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平公司「升职记」（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平公司「升职记」（其三）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "星际和平公司「升职记」（其四）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "天使型谢债发行机",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "咔嚓——星际和平银行！（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "咔嚓——星际和平银行！（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虫潮•虫巢探险（一级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虫潮•虫巢探险（二级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虫潮•虫巢探险（三级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虫潮•沉睡领主（一级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虫潮•沉睡领主（二级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虫潮•沉睡领主（三级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虫潮•区域脑体（一级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虫潮•区域脑体（二级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虫潮•区域脑体（三级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "繁育•虫巢探险（一级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "繁育•虫巢探险（二级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "繁育•沉睡领主（一级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "繁育•沉睡领主（二级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "繁育•沉睡领主（三级卫戍）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "在你拥有2个以上未强化的3星祝福时出现。",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "在你未获得最后一个回响构音时出现。",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "在你未获得全部「当前命途」的祝福并且「当前命途」的祝福在6个以下 / 以上时出现。",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "在你未获得全部「当前命途」的祝福并且拥有4个以上的1星祝福时出现。",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "在你拥有0个 / 10个以上的奇物时出现。",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "在你拥有咕咕钟系列负面奇物时出现。",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "在你未获得任何「当前命途」的三星祝福时出现。",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "龋齿星系模型",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "在你拥有500以上宇宙碎片 / 100以下宇宙碎片时出现。",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "孤独，太空美虫，模拟宇宙（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "孤独，太空美虫，模拟宇宙（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "咕咕钟狂热粉丝（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "咕咕钟狂热粉丝（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "咕咕钟狂热粉丝（其三）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "兽群•贪饕灾厄",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "像素世界•隐藏关",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "天才俱乐部#55余清涂",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "天才俱乐部＃55余清涂",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "粉红冲撞",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "塔拉毒火焰",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "阮•梅（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "银河商人（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "银河忽悠（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "银河好人（其三）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "谢债发行机（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "谢债发行机（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虚构史学家（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虚构史学家（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "萨里奥（其一）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "萨里（其二）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "里奥（其三）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "尼尔迪斯牌（野猪篇）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "尼尔迪斯牌（机械篇）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "尼尔迪斯牌（灯鱼篇）",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "虫网",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "错误道具",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "斯蒂芬•劳艾德的点子",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  },
+  {
+    "name": "杰姆•哈克与杰姆•哈尔",
+    "priority": "",
+    "secondary": "",
+    "avoid": ""
+  }
+]
