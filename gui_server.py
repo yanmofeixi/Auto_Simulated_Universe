@@ -216,20 +216,26 @@ class GUIServerHandler(SimpleHTTPRequestHandler):
             else:
                 script = ROOT_DIR / "run_simul.py"
 
-            # 使用 subprocess 在后台启动
             if sys.platform == "win32":
-                # Windows: 使用 pythonw 或 start 命令
-                subprocess.Popen(
-                    [sys.executable, str(script)],
-                    creationflags=subprocess.CREATE_NEW_CONSOLE,
-                    cwd=str(ROOT_DIR),
+                # Windows: 使用 runas 以管理员身份启动单个窗口
+                # 这样 pyuac 就不会再次触发 UAC 提升
+                import ctypes
+                ctypes.windll.shell32.ShellExecuteW(
+                    None,
+                    "runas",  # 以管理员身份运行
+                    sys.executable,
+                    str(script),
+                    str(ROOT_DIR),
+                    1  # SW_SHOWNORMAL
                 )
             else:
-                # macOS/Linux
+                # macOS/Linux: 后台运行
                 subprocess.Popen(
                     [sys.executable, str(script)],
-                    start_new_session=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
                     cwd=str(ROOT_DIR),
+                    start_new_session=True,
                 )
 
             self._send_json({"success": True, "mode": mode})
