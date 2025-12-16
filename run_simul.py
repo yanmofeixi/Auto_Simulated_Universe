@@ -5,13 +5,16 @@
 - 核心逻辑位于 simul/app.py,便于模块化重构与维护.
 """
 
+import sys
+
 import pyuac
 
 from simul.app import main
 
 
 if __name__ == "__main__":
-    if not pyuac.isUserAdmin():
-        pyuac.runAsAdmin()
-    else:
+    # 如果传入 --elevated 参数，跳过 UAC 检查（已经是管理员）
+    if "--elevated" in sys.argv or pyuac.isUserAdmin():
         main()
+    else:
+        pyuac.runAsAdmin()

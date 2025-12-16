@@ -47,7 +47,8 @@ pip install -r requirements.txt
 
 **Windows Users (Recommended)**
 
-Double-click `start_gui.bat` to launch the configuration panel.
+- Double-click `start_gui.vbs` - Hidden window launch, only opens browser
+- Double-click `start_gui.bat` - Shows console window (for viewing logs)
 
 **Command Line**
 
@@ -135,7 +136,8 @@ The count resets automatically each week. To manually modify the count, edit `lo
 
 ```
 Auto_Simulated_Universe/
-├── start_gui.bat           # GUI launcher (double-click to run)
+├── start_gui.vbs           # GUI launcher (hidden window)
+├── start_gui.bat           # GUI launcher (shows console)
 ├── gui_server.py           # GUI server
 ├── gui/                    # Web GUI files
 │   ├── index.html

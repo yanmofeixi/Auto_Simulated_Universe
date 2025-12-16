@@ -47,7 +47,8 @@ pip install -r requirements.txt
 
 **Windows 使用者（推薦）**
 
-雙擊 `start_gui.bat` 即可啟動配置面板。
+- 雙擊 `start_gui.vbs` - 隱藏視窗啟動，只開啟瀏覽器
+- 雙擊 `start_gui.bat` - 顯示控制台視窗啟動（可查看日誌）
 
 **命令列啟動**
 
@@ -135,7 +136,8 @@ python notif.py
 
 ```
 Auto_Simulated_Universe/
-├── start_gui.bat           # GUI 啟動器（雙擊執行）
+├── start_gui.vbs           # GUI 啟動器（隱藏視窗）
+├── start_gui.bat           # GUI 啟動器（顯示控制台）
 ├── gui_server.py           # GUI 伺服器
 ├── gui/                    # Web GUI 檔案
 │   ├── index.html

@@ -217,14 +217,14 @@ class GUIServerHandler(SimpleHTTPRequestHandler):
                 script = ROOT_DIR / "run_simul.py"
 
             if sys.platform == "win32":
-                # Windows: 使用 runas 以管理员身份启动单个窗口
-                # 这样 pyuac 就不会再次触发 UAC 提升
+                # Windows: 使用 ShellExecuteW 以管理员身份启动
+                # 传递 --elevated 参数跳过 pyuac 的二次提升
                 import ctypes
                 ctypes.windll.shell32.ShellExecuteW(
                     None,
                     "runas",  # 以管理员身份运行
                     sys.executable,
-                    str(script),
+                    f'"{script}" --elevated',
                     str(ROOT_DIR),
                     1  # SW_SHOWNORMAL
                 )

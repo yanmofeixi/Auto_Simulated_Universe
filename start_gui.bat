@@ -4,6 +4,8 @@ echo ========================================
 echo   Auto Simulated Universe - GUI 启动器
 echo ========================================
 echo.
+echo 提示: 如果想隐藏此窗口，请使用 start_gui.vbs
+echo.
 
 :: 检查 Python 是否安装
 python --version >nul 2>&1
