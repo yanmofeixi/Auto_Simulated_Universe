@@ -1026,18 +1026,6 @@
     "avoid": ""
   },
   {
-    "name": "信息",
-    "priority": "",
-    "secondary": "",
-    "avoid": ""
-  },
-  {
-    "name": "仅在黄金与机械中满足 -30 ≤ 认知 ≤ 0 时出现。",
-    "priority": "",
-    "secondary": "",
-    "avoid": ""
-  },
-  {
     "name": "香涎干酪",
     "priority": "",
     "secondary": "",
@@ -1278,55 +1266,7 @@
     "avoid": ""
   },
   {
-    "name": "在你拥有2个以上未强化的3星祝福时出现。",
-    "priority": "",
-    "secondary": "",
-    "avoid": ""
-  },
-  {
-    "name": "在你未获得最后一个回响构音时出现。",
-    "priority": "",
-    "secondary": "",
-    "avoid": ""
-  },
-  {
-    "name": "在你未获得全部「当前命途」的祝福并且「当前命途」的祝福在6个以下 / 以上时出现。",
-    "priority": "",
-    "secondary": "",
-    "avoid": ""
-  },
-  {
-    "name": "在你未获得全部「当前命途」的祝福并且拥有4个以上的1星祝福时出现。",
-    "priority": "",
-    "secondary": "",
-    "avoid": ""
-  },
-  {
-    "name": "在你拥有0个 / 10个以上的奇物时出现。",
-    "priority": "",
-    "secondary": "",
-    "avoid": ""
-  },
-  {
-    "name": "在你拥有咕咕钟系列负面奇物时出现。",
-    "priority": "",
-    "secondary": "",
-    "avoid": ""
-  },
-  {
-    "name": "在你未获得任何「当前命途」的三星祝福时出现。",
-    "priority": "",
-    "secondary": "",
-    "avoid": ""
-  },
-  {
     "name": "龋齿星系模型",
-    "priority": "",
-    "secondary": "",
-    "avoid": ""
-  },
-  {
-    "name": "在你拥有500以上宇宙碎片 / 100以下宇宙碎片时出现。",
     "priority": "",
     "secondary": "",
     "avoid": ""

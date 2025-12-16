@@ -180,8 +180,7 @@ def _handle_event_with_ocr(universe, event_number: int) -> bool:
     if _approach_and_interact_event(universe):
         log.info(f"[OCR事件匹配] 第 {event_number} 个事件开始处理")
         
-        timeout = time.time() + 30
-        while time.time() < timeout:
+        while True:
             universe.ts.forward(universe.get_screen())
             area_text = universe.clean_text(
                 universe.ts.ocr_one_row(universe.screen, [50, 350, 3, 35]), char=0
@@ -201,9 +200,6 @@ def _handle_event_with_ocr(universe, event_number: int) -> bool:
             else:
                 universe.run_static()
                 time.sleep(0.3)
-        
-        log.info(f"[OCR事件匹配] 第 {event_number} 个事件处理超时")
-        return True
     
     log.info(f"[OCR事件匹配] 无法接近第 {event_number} 个事件")
     return False
