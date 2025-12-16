@@ -165,32 +165,95 @@ function initSkillSelector() {
   }
 }
 
-// 初始化传送门优先级
+// 初始化传送门优先级（拖拽排序）
 function initPortalPriority() {
-  const container = document.getElementById("portalPriorityGrid");
+  const container = document.getElementById("portalPriorityList");
   const portalPrior =
     config.config?.portal_prior || constants.default_portal_prior || {};
   const portalTypes = constants.portal_types || [];
 
+  // 按优先级排序（高优先级在前）
+  const sortedTypes = [...portalTypes].sort(
+    (a, b) => (portalPrior[b] || 1) - (portalPrior[a] || 1)
+  );
+
   container.innerHTML = "";
-  portalTypes.forEach((type) => {
+  sortedTypes.forEach((type, index) => {
     const div = document.createElement("div");
-    div.className = "priority-item";
+    div.className = "sortable-item";
+    div.draggable = true;
+    div.dataset.type = type;
     div.innerHTML = `
-      <label>${type}</label>
-      <select id="portal_${type}">
-        <option value="1" ${
-          portalPrior[type] === 1 ? "selected" : ""
-        }>1 - 低</option>
-        <option value="2" ${
-          portalPrior[type] === 2 ? "selected" : ""
-        }>2 - 中</option>
-        <option value="3" ${
-          portalPrior[type] === 3 ? "selected" : ""
-        }>3 - 高</option>
-      </select>
+      <span class="drag-handle">☰</span>
+      <span class="item-rank">${portalTypes.length - index}</span>
+      <span class="item-label">${type}</span>
     `;
     container.appendChild(div);
+  });
+
+  // 初始化拖拽排序
+  initSortable(container);
+}
+
+// 拖拽排序功能
+function initSortable(container) {
+  let draggedItem = null;
+
+  container.addEventListener("dragstart", (e) => {
+    if (e.target.classList.contains("sortable-item")) {
+      draggedItem = e.target;
+      e.target.classList.add("dragging");
+    }
+  });
+
+  container.addEventListener("dragend", (e) => {
+    if (e.target.classList.contains("sortable-item")) {
+      e.target.classList.remove("dragging");
+      draggedItem = null;
+      updateRanks(container);
+    }
+  });
+
+  container.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const afterElement = getDragAfterElement(container, e.clientY);
+    if (draggedItem) {
+      if (afterElement == null) {
+        container.appendChild(draggedItem);
+      } else {
+        container.insertBefore(draggedItem, afterElement);
+      }
+    }
+  });
+}
+
+function getDragAfterElement(container, y) {
+  const draggableElements = [
+    ...container.querySelectorAll(".sortable-item:not(.dragging)"),
+  ];
+
+  return draggableElements.reduce(
+    (closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest;
+      }
+    },
+    { offset: Number.NEGATIVE_INFINITY }
+  ).element;
+}
+
+function updateRanks(container) {
+  const items = container.querySelectorAll(".sortable-item");
+  const total = items.length;
+  items.forEach((item, index) => {
+    const rankEl = item.querySelector(".item-rank");
+    if (rankEl) {
+      rankEl.textContent = total - index;
+    }
   });
 }
 
@@ -298,8 +361,6 @@ function populateForm() {
   document.getElementById("accuracy").value =
     cfg.accuracy ?? constants.default_accuracy ?? 1440;
   document.getElementById("ocr_use_gpu").checked = cfg.ocr_use_gpu ?? false;
-  document.getElementById("enable_portal_prior").checked =
-    cfg.enable_portal_prior === 1;
 
   // 模拟宇宙配置
   document.getElementById("use_consumable").checked = cfg.use_consumable === 1;
@@ -328,9 +389,7 @@ function collectFormData() {
     accuracy: parseInt(document.getElementById("accuracy").value),
     ocr_use_gpu: document.getElementById("ocr_use_gpu").checked,
     team: document.getElementById("team").value,
-    enable_portal_prior: document.getElementById("enable_portal_prior").checked
-      ? 1
-      : 0,
+    enable_portal_prior: 1,
     portal_prior: {},
     skill: [],
 
@@ -348,11 +407,14 @@ function collectFormData() {
     if (val) cfg.skill.push(val);
   }
 
-  // 收集传送门优先级
-  portalTypes.forEach((type) => {
-    cfg.portal_prior[type] = parseInt(
-      document.getElementById(`portal_${type}`).value
-    );
+  // 收集传送门优先级（从拖拽排序列表）
+  const portalItems = document.querySelectorAll(
+    "#portalPriorityList .sortable-item"
+  );
+  const totalPortals = portalItems.length;
+  portalItems.forEach((item, index) => {
+    const type = item.dataset.type;
+    cfg.portal_prior[type] = totalPortals - index;
   });
 
   // 收集次要命途

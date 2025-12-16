@@ -221,11 +221,17 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  height: 100%;
+}
+
+.checkbox-group input[type="checkbox"] {
+  flex-shrink: 0;
 }
 
 .checkbox-group label {
   font-weight: 400;
   color: var(--text-primary);
+  line-height: 1.25rem;
 }
 
 .skill-selector {
@@ -456,4 +462,63 @@ footer a {
 
 footer a:hover {
   text-decoration: underline;
+}
+
+/* 拖拽排序列表 */
+.sortable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sortable-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: grab;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.sortable-item:hover {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.sortable-item:active {
+  cursor: grabbing;
+}
+
+.sortable-item.dragging {
+  opacity: 0.5;
+  border-color: var(--primary);
+}
+
+.sortable-item .drag-handle {
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.sortable-item .item-rank {
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.sortable-item .item-label {
+  flex: 1;
+  font-weight: 500;
+  color: var(--text-primary);
 }

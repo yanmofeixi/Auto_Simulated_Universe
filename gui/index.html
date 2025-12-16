@@ -82,7 +82,8 @@
                 />
               </div>
               <div class="form-group">
-                <div class="checkbox-group" style="margin-top: 1.5rem">
+                <label>&nbsp;</label>
+                <div class="checkbox-group">
                   <input type="checkbox" id="ocr_use_gpu" />
                   <label for="ocr_use_gpu"
                     >OCR 使用 GPU 加速
@@ -123,21 +124,16 @@
 
           <div class="config-section">
             <h3 class="section-title">🚪 传送门优先级</h3>
-            <div class="form-grid">
-              <div class="form-group">
-                <div class="checkbox-group">
-                  <input type="checkbox" id="enable_portal_prior" />
-                  <label for="enable_portal_prior"
-                    >启用自定义传送门优先级</label
-                  >
-                </div>
-              </div>
-            </div>
-            <div
-              class="priority-grid"
-              id="portalPriorityGrid"
-              style="margin-top: 1rem"
+            <p
+              style="
+                color: var(--text-secondary);
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+              "
             >
+              拖拽排序，顶部优先级最高 (6)，底部最低 (1)
+            </p>
+            <div class="sortable-list" id="portalPriorityList">
               <!-- 动态生成 -->
             </div>
           </div>
@@ -155,7 +151,8 @@
                 </select>
               </div>
               <div class="form-group">
-                <div class="checkbox-group" style="margin-top: 1.5rem">
+                <label>&nbsp;</label>
+                <div class="checkbox-group">
                   <input type="checkbox" id="use_consumable" />
                   <label for="use_consumable">使用消耗品</label>
                 </div>

@@ -189,7 +189,6 @@ class GUIServerHandler(SimpleHTTPRequestHandler):
                     "ocr_use_gpu": False,
                     "team": defaults.get("default_team", "终结技"),
                     "skill": characters.get("skill_characters", []),
-                    "enable_portal_prior": 0,
                     "portal_prior": defaults.get("diver_portal_prior", {}),
                     "fate": defaults.get("default_fate", "巡猎"),
                     "secondary_fate": defaults.get("default_secondary_fates", []),

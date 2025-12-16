@@ -1,199 +1,155 @@
 [简体中文](README.md) | [繁体中文](README_CHT.md) | [English](README_ENG.md)
 
-# Auto_Simulated_Universe
+# Auto Simulated Universe
 
-星穹铁道-模拟宇宙全自动化
+崩坏：星穹铁道 - 模拟宇宙 & 差分宇宙 全自动化工具
 
-快速上手，请访问：[项目文档](https://github.com/Night-stars-1/Auto_Simulated_Universe_Docs/blob/docs/docs/guide/index.md)
+## ✨ 功能特点
 
-遇到问题，请在提问前查看：[Q&A](https://github.com/Night-stars-1/Auto_Simulated_Universe_Docs/blob/docs/docs/guide/qa.md)
+- 🌌 **差分宇宙**：全自动刷取差分宇宙
+- 🌠 **模拟宇宙**：全自动刷取普通模拟宇宙
+- 🖥️ **图形界面**：内置 Web GUI 配置面板，无需手动编辑配置文件
+- 🎯 **智能识别**：基于 OCR 的文字识别，支持事件、祝福、奇物等选择
+- ⚡ **GPU 加速**：可选 CUDA 加速 OCR 推理
 
-运行自动化时不能用电脑做其他事？试试多用户后台运行！[后台运行](https://github.com/Night-stars-1/Auto_Simulated_Universe_Docs/blob/docs/docs/guide/bs.md)
+## ⚠️ 免责声明
 
-此页面主要介绍差分宇宙自动化，如需详细的普通模拟宇宙自动化介绍请移步[普通宇宙](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/old/README.md)
+本软件是一个外部工具，旨在自动化崩坏：星穹铁道的游戏玩法。它仅通过现有用户界面与游戏交互，不会修改任何游戏文件或游戏代码。
 
----
+本软件开源、免费，仅供学习交流使用。开发者团队拥有本项目的最终解释权。使用本软件产生的所有问题与本项目与开发者团队无关。
 
-## 免责声明
+根据米哈游的[崩坏：星穹铁道公平游戏宣言](https://sr.mihoyo.com/news/111246?nav=news&type=notice)：
 
-本软件是一个外部工具旨在自动化崩坏星轨的游戏玩法。它被设计成仅通过现有用户界面与游戏交互,并遵守相关法律法规。该软件包旨在提供简化和用户通过功能与游戏交互,并且它不打算以任何方式破坏游戏平衡或提供任何不公平的优势。该软件包不会以任何方式修改任何游戏文件或游戏代码。
+> "严禁使用外挂、加速器、脚本或其他破坏游戏公平性的第三方工具。"
+> "一经发现，米哈游将视违规严重程度及违规次数，采取扣除违规收益、冻结游戏账号、永久封禁游戏账号等措施。"
 
-This software is open source, free of charge and for learning and exchange purposes only. The developer team has the final right to interpret this project. All problems arising from the use of this software are not related to this project and the developer team. If you encounter a merchant using this software to practice on your behalf and charging for it, it may be the cost of equipment and time, etc. The problems and consequences arising from this software have nothing to do with it.
+## 📋 系统要求
 
-本软件开源、免费，仅供学习交流使用。开发者团队拥有本项目的最终解释权。使用本软件产生的所有问题与本项目与开发者团队无关。若您遇到商家使用本软件进行代练并收费，可能是设备与时间等费用，产生的问题及后果与本软件无关。
+- Windows 10/11（macOS/Linux 仅支持部分功能）
+- Python 3.11+
+- 屏幕分辨率：1920×1080 或更高（窗口化或全屏）
+- 游戏设置：关闭 HDR，文本语言选择简体中文
+- 游戏界面不能有任何遮挡
 
-请注意，根据 MiHoYo 的 [崩坏:星穹铁道的公平游戏宣言](<[https://hsr.hoyoverse.com/en-us/news/111244](https://sr.mihoyo.com/news/111246?nav=news&type=notice)>):
+## 🚀 快速开始
 
-    "严禁使用外挂、加速器、脚本或其他破坏游戏公平性的第三方工具。"
-    "一经发现，米哈游(下亦称“我们”)将视违规严重程度及违规次数，采取扣除违规收益、冻结游戏账号、永久封禁游戏账号等措施。"
+### 1. 安装依赖
 
-## 命令行用法
+推荐使用 Anaconda 创建虚拟环境：
 
-\[新增\]: v7.2 后支持云·星穹铁道。云崩铁要用网页应用打开，直接在网页打开会无法识别。需要关闭网速和延迟显示；同时需要设置为全屏幕，并且物理屏幕分辨率为 x\*1080(x>=1920)。若无法达到要求，建议在多用户下开启。
-
-只支持 x\*1080(x>=1920,窗口化或全屏幕)，关闭 hdr，文本语言选择简体中文，游戏界面不能有任何遮挡。代码版[下载链接](https://github.com/CHNZYX/Auto_Simulated_Universe/archive/refs/heads/main.zip)
-
-**第一次运行**
-
-建议使用 anaconda，创建虚拟环境并安装依赖库(conda 需要在 cmd 下运行，powershell 可能无法切换虚拟环境)
-
-```plaintext
+```bash
 conda create -n asu python=3.13 -y
 conda activate asu
 pip install -r requirements.txt
 ```
 
-或者直接安装(不建议)：双击`install_requirements.bat`安装依赖库
+### 2. 启动 GUI 配置面板
 
-### GPU 加速 (可选)
+**Windows 用户（推荐）**
 
-如果你有 NVIDIA 显卡，可以启用 CUDA 加速以获得更好的 OCR 性能：
+双击 `start_gui.bat` 即可启动配置面板。
+
+**命令行启动**
 
 ```bash
-# NVIDIA GPU（CUDA）
-pip uninstall onnxruntime-directml
-pip install -r requirements.txt
+python gui_server.py
 ```
 
-说明：本项目当前 OCR 推理仅使用 CUDAExecutionProvider（不再支持 TensorRT）。
+浏览器会自动打开 `http://localhost:8520`，在界面中配置各项参数。
 
-重命名 info_example.yml 为 info.yml
+### 3. 运行
 
-**运行自动化**
+**使用 GUI 启动（推荐）**
 
-命令行运行
+在配置面板中点击「启动差分宇宙」或「启动模拟宇宙」按钮。
 
-差分宇宙
+**使用命令行启动**
 
-```plaintext
+```bash
+# 差分宇宙
 python run_diver.py
-```
 
-或普通模拟宇宙
-
-```plaintext
+# 模拟宇宙
 python run_simul.py
 ```
 
-详细参数：
+**手动配置（高级用户）**
 
-```plaintext
-python run_simul.py --bonus=<bonus> --debug=<debug> --speed=<speed> --find=<find>
+如需手动配置，复制 `info_example.yml` 为 `info.yml`，然后编辑配置文件。
+
+## ⚙️ 配置说明
+
+### 通用配置
+
+| 配置项       | 说明                               |
+| ------------ | ---------------------------------- |
+| `angle`      | 校准值（鼠标灵敏度倍率），默认 1.0 |
+| `difficulty` | 难度 1-5，5 为最高难度             |
+| `timezone`   | 时区设置，默认跟随系统             |
+
+### 差分宇宙配置
+
+| 配置项         | 说明                                         |
+| -------------- | -------------------------------------------- |
+| `accuracy`     | 图像识别精度，默认 1440，范围 960-1920       |
+| `ocr_use_gpu`  | OCR 是否使用 GPU 加速                        |
+| `team`         | 队伍类型：追击/dot/终结技/击破/盾反/白厄盾丹 |
+| `skill`        | 首领房间需要开秘技的角色列表                 |
+| `portal_prior` | 传送门优先级（1-6，数字越大优先级越高）      |
+
+### 模拟宇宙配置
+
+| 配置项           | 说明                         |
+| ---------------- | ---------------------------- |
+| `fate`           | 当前命途                     |
+| `secondary_fate` | 次要命途（备选）             |
+| `use_consumable` | 是否使用消耗品               |
+| `prior`          | 奇物、事件、祝福的优先级列表 |
+
+## 🔧 校准
+
+如果出现视角转动过大/过小而导致迷路的问题，需要进行校准：
+
+1. 进入游戏，将人物传送到黑塔的办公室
+2. 运行校准脚本：
+
+```bash
+python align_angle.py
 ```
 
-bonus in [0,1]：是否开启沉浸奖励
+3. 等待视角转换/原地转圈结束
 
-speed in [0,1]：开启速通模式
+> 注意：改变鼠标 DPI 可能会影响校准值，需要重新校准。
 
-consumable in [0,1]：精英和首领战之前是否使用最左上角的消耗品
+## 🔔 通知插件
 
-debug in [0,1,2]：开启调试模式
+运行 `notif.py` 可开启 Windows 通知，每刷完一次都会收到通知：
 
-find in [0,1]：0 为录图，1 为跑图
-
----
-
-`info.yml`内容如下
-
-```yaml
-config:
-  # 校准值
-  angle: 1.0
-  # 难度，1-5，(5代表最高难度，如果世界没有难度5则会选择难度4)
-  difficulty: 5
-  # 队伍类型 目前只支持：追击/dot/终结技/击破/盾反/白厄盾丹
-  team: 终结技
-  # 首领房间需要开秘技的角色，按顺序开
-  skill:
-    - 黄泉
-  timezone: Default
-  # 图像识别精度
-  # 图像识别精度，默认1440，越高越精确，但是也越慢(最高1920)
-  accuracy: 1440
-  # 传送门优先级，1-3，3代表优先级最高
-  # 如需自定义请将enable_portal_prior设为1
-  enable_portal_prior: 0
-  portal_prior:
-    商店: 1
-    财富: 1
-    战斗: 2
-    遭遇: 2
-    奖励: 3
-    事件: 3
-
-key_mapping:
-  # 交互键
-  - f
-  # 地图
-  - m
-  # 奔跑
-  - shift
-  # 自动战斗
-  - v
-  # 秘技
-  - e
-  # 移动
-  - w
-  - a
-  - s
-  - d
-  # 切换角色
-  - "1"
-  - "2"
-  - "3"
-  - "4"
+```bash
+python notif.py
 ```
 
-必须携带至少一名远程平 a 角色，最好放在 1 号位
+计数会在每周自动重置。如需手动修改计数，编辑 `logs/notif.txt`。
 
-注意！！！！！ 开始运行/开始校准之后就不要移动游戏窗口了！要移动请先停止自动化！
+## 📁 项目结构
 
-**校准**
-
-如果出现视角转动过大/过小而导致迷路的问题，可能是校准值出问题了，可以尝试手动校准：
-
-进入游戏，将人物传送到黑塔的办公室，然后命令行运行 `python align_angle.py`，等待视角转换/原地转圈结束
-
-改变鼠标 dpi 可能会影响校准值，此时需要重新校准。
-
-## 通知插件使用方法(notif.exe)
-
-如果你没有用本地多用户，那么直接双击`notif.exe`即可开启 windows 通知，每刷完一次都会通知哦
-
-如果你用了本地多用户，那么请在运行自动化的子用户启动脚本，在主用户运行 notif，这样就能在主用户收到通知
-
-计数会在每周自动重置，如果想手动改变计数，请打开`logs/notif.txt`，修改第一行的信息
-
-通知插件会在右下角显示托盘图标
-
----
-
-~~欢迎加入，欢迎反馈 bug，QQ 群：831830526~~
-
-~~群没了，可以加 736265667~~
-
-二群 545443061
-
----
-
-如果喜欢本项目，可以打赏送作者一杯咖啡喵！
-
-![打赏](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/money.jpg)
-
----
-
-## 贡献者
-
-感谢以下贡献者对本项目做出的贡献
-
-<a href="https://github.com/CHNZYX/Auto_Simulated_Universe/graphs/contributors">
-
-  <img src="https://contrib.rocks/image?repo=CHNZYX/Auto_Simulated_Universe" />
-
-</a>
-
-![Alt](https://repobeats.axiom.co/api/embed/a24da575ebc375e58ec8d8a0d7fff6d26306d2fc.svg "Repobeats analytics image")
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=CHNZYX/Auto_Simulated_Universe&type=Date)](https://star-history.com/#CHNZYX/Auto_Simulated_Universe&Date)
+```
+Auto_Simulated_Universe/
+├── start_gui.bat           # GUI 启动器（双击运行）
+├── gui_server.py           # GUI 服务器
+├── gui/                    # Web GUI 文件
+│   ├── index.html
+│   ├── styles.css
+│   └── main.js
+├── run_diver.py            # 差分宇宙入口
+├── run_simul.py            # 模拟宇宙入口
+├── diver/                  # 差分宇宙模块
+├── simul/                  # 模拟宇宙模块
+├── utils/                  # 通用工具
+├── data/                   # 数据文件
+│   ├── defaults.json       # 默认配置
+│   ├── characters.json     # 角色列表
+│   └── ocr_defaults.json   # OCR 默认词表
+├── info.yml                # 用户配置文件
+└── info_example.yml        # 配置示例
+```
