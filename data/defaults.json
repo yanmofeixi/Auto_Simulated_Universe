@@ -3,6 +3,19 @@
   "accuracy": 1440,
   "default_team": "终结技",
   "default_long_range_slot": "1",
+  "default_angle": 1.0,
+  "default_difficulty": 5,
+  "default_timezone": "Default",
+  "default_secondary_fates": ["巡猎", "毁灭", "丰饶"],
+  "default_order_text": [1, 2, 3, 4],
+  "default_fate": "巡猎",
+  "team_types": ["追击", "dot", "终结技", "击破", "盾反", "白厄盾丹"],
+  "timezones": [
+    { "value": "Default", "label": "Default (跟随系统)" },
+    { "value": "Asia/Shanghai", "label": "Asia/Shanghai (北京时间)" },
+    { "value": "America/New_York", "label": "America/New_York (美东时间)" },
+    { "value": "Europe/London", "label": "Europe/London (伦敦时间)" }
+  ],
   "diver_portal_prior": {
     "奖励": 3,
     "事件": 3,

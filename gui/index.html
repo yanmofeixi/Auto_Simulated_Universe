@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auto Simulated Universe - 配置面板</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>⭐ Auto Simulated Universe</h1>
+        <p>崩坏：星穹铁道 - 模拟宇宙 & 差分宇宙 自动化工具</p>
+      </header>
+
+      <div class="launch-buttons">
+        <button class="launch-btn diver" onclick="launchProgram('diver')">
+          <span class="icon">🌌</span>
+          启动差分宇宙
+        </button>
+        <button class="launch-btn simul" onclick="launchProgram('simul')">
+          <span class="icon">🌠</span>
+          启动模拟宇宙
+        </button>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="common">通用配置</button>
+        <button class="tab-btn" data-tab="diver">差分宇宙</button>
+        <button class="tab-btn" data-tab="simul">模拟宇宙</button>
+      </div>
+
+      <form id="configForm">
+        <!-- 通用配置 -->
+        <div class="tab-content active" id="tab-common">
+          <div class="config-section">
+            <h3 class="section-title">🎮 基础设置</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>校准值 (鼠标灵敏度倍率)</label>
+                <input
+                  type="number"
+                  id="angle"
+                  step="0.01"
+                  min="0.1"
+                  max="5"
+                  value="1.0"
+                />
+              </div>
+              <div class="form-group">
+                <label>难度 <span class="hint">(1-5, 5为最高)</span></label>
+                <select id="difficulty">
+                  <!-- 动态生成 -->
+                </select>
+              </div>
+              <div class="form-group">
+                <label>时区设置</label>
+                <select id="timezone">
+                  <!-- 动态生成 -->
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 差分宇宙配置 -->
+        <div class="tab-content" id="tab-diver">
+          <div class="config-section">
+            <h3 class="section-title">⚙️ 性能设置</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label
+                  >图像识别精度 <span class="hint">(推荐960-1920)</span></label
+                >
+                <input
+                  type="number"
+                  id="accuracy"
+                  min="960"
+                  max="1920"
+                  step="10"
+                  value="1440"
+                />
+              </div>
+              <div class="form-group">
+                <div class="checkbox-group" style="margin-top: 1.5rem">
+                  <input type="checkbox" id="ocr_use_gpu" />
+                  <label for="ocr_use_gpu"
+                    >OCR 使用 GPU 加速
+                    <span class="hint">(小模型CPU更快)</span></label
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h3 class="section-title">👥 队伍设置</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>队伍类型</label>
+                <select id="team">
+                  <!-- 动态生成 -->
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h3 class="section-title">🎯 首领房间秘技角色</h3>
+            <p
+              style="
+                color: var(--text-secondary);
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+              "
+            >
+              按顺序选择需要开秘技的角色
+            </p>
+            <div class="skill-selector" id="skillSelector">
+              <!-- 动态生成 -->
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h3 class="section-title">🚪 传送门优先级</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <div class="checkbox-group">
+                  <input type="checkbox" id="enable_portal_prior" />
+                  <label for="enable_portal_prior"
+                    >启用自定义传送门优先级</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div
+              class="priority-grid"
+              id="portalPriorityGrid"
+              style="margin-top: 1rem"
+            >
+              <!-- 动态生成 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 模拟宇宙配置 -->
+        <div class="tab-content" id="tab-simul">
+          <div class="config-section">
+            <h3 class="section-title">🌟 命途设置</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>当前命途</label>
+                <select id="fate">
+                  <!-- 动态生成 -->
+                </select>
+              </div>
+              <div class="form-group">
+                <div class="checkbox-group" style="margin-top: 1.5rem">
+                  <input type="checkbox" id="use_consumable" />
+                  <label for="use_consumable">使用消耗品</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h3 class="section-title">🔄 次要命途 (备选)</h3>
+            <p
+              style="
+                color: var(--text-secondary);
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+              "
+            >
+              当主命途祝福不可用时的备选顺序
+            </p>
+            <div class="fate-selector" id="secondaryFateSelector">
+              <!-- 动态生成 -->
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h3 class="section-title">📊 命途优先级顺序</h3>
+            <div class="order-selector" id="orderSelector">
+              <!-- 动态生成 -->
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h3 class="section-title">✨ 优先级配置</h3>
+
+            <div class="form-group full-width">
+              <label>奇物优先列表 <span class="hint">(每行一个)</span></label>
+              <div class="list-editor">
+                <textarea id="prior_curio"></textarea>
+                <p class="list-editor-hint">优先选择的奇物，每行输入一个名称</p>
+              </div>
+            </div>
+
+            <div class="form-group full-width" style="margin-top: 1rem">
+              <label>事件优先列表 <span class="hint">(每行一个)</span></label>
+              <div class="list-editor">
+                <textarea id="prior_event"></textarea>
+                <p class="list-editor-hint">
+                  优先选择的事件选项，每行输入一个名称
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h3 class="section-title">🎁 各命途祝福优先级</h3>
+            <div id="fateBlessingsContainer">
+              <!-- 动态生成 -->
+            </div>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="resetConfig()"
+          >
+            🔄 重置为默认
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="loadConfig()"
+          >
+            📂 重新加载
+          </button>
+          <button type="submit" class="btn btn-primary">💾 保存配置</button>
+        </div>
+      </form>
+
+      <footer>
+        <p>
+          <a
+            href="https://github.com/CHNZYX/Auto_Simulated_Universe"
+            target="_blank"
+            >GitHub</a
+          >
+          · Made with ❤️ for Honkai: Star Rail
+        </p>
+      </footer>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-message" id="statusMessage">
+        <span>就绪</span>
+      </div>
+      <div id="serverStatus">
+        服务器: <span id="serverStatusText">检测中...</span>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
