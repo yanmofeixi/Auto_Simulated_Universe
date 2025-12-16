@@ -169,9 +169,13 @@ class GUIServerHandler(SimpleHTTPRequestHandler):
         """保存配置."""
         try:
             data = self._read_body()
+            print(f"[GUI Server] 保存配置到: {CONFIG_FILE}")
+            print(f"[GUI Server] 配置内容: {list(data.keys())}")
             save_yaml(CONFIG_FILE, data)
+            print(f"[GUI Server] 配置保存成功")
             self._send_json({"success": True})
         except Exception as e:
+            print(f"[GUI Server] 保存配置失败: {e}")
             self._send_error(500, str(e))
 
     def _handle_reset_config(self):

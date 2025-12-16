@@ -2,6 +2,7 @@
 let config = {};
 let defaults = {};
 let constants = {};
+let isDirty = false; // 跟踪表单是否被修改
 const API_BASE = "http://localhost:8520";
 
 // 初始化
@@ -12,6 +13,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadDefaults();
   await loadConfig();
   initUI();
+  initFormChangeListeners();
+  setDirty(false); // 初始状态为未修改
 });
 
 // 检查服务器状态
@@ -455,8 +458,13 @@ function collectFormData() {
 // 保存配置
 document.getElementById("configForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  showStatus("保存中...", "loading");
 
+  if (!isDirty) {
+    showStatus("配置未修改", "info");
+    return;
+  }
+
+  showStatus("保存中...", "loading");
   const data = collectFormData();
 
   try {
@@ -467,6 +475,7 @@ document.getElementById("configForm").addEventListener("submit", async (e) => {
     });
 
     if (response.ok) {
+      setDirty(false);
       showStatus("配置保存成功！", "success");
     } else {
       throw new Error("Save failed");
@@ -549,5 +558,42 @@ function initTabs() {
       btn.classList.add("active");
       document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
     });
+  });
+}
+
+// 脏状态管理
+function setDirty(dirty) {
+  isDirty = dirty;
+  const saveBtn = document.querySelector('button[type="submit"]');
+  if (saveBtn) {
+    if (dirty) {
+      saveBtn.classList.add("dirty");
+      saveBtn.classList.remove("clean");
+    } else {
+      saveBtn.classList.remove("dirty");
+      saveBtn.classList.add("clean");
+    }
+  }
+}
+
+// 监听表单变化
+function initFormChangeListeners() {
+  const form = document.getElementById("configForm");
+
+  // 监听所有 input, select, textarea 变化
+  form.addEventListener("input", () => setDirty(true));
+  form.addEventListener("change", () => setDirty(true));
+
+  // 监听拖拽排序完成
+  const portalList = document.getElementById("portalPriorityList");
+  if (portalList) {
+    portalList.addEventListener("dragend", () => setDirty(true));
+  }
+
+  // 监听次要命途点击
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("fate-chip")) {
+      setDirty(true);
+    }
   });
 }
