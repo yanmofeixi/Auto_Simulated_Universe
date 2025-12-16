@@ -83,6 +83,7 @@ class ActionEngine:
         """执行静态规则.
 
         返回命中的规则 name;未命中返回空字符串.
+        优先匹配触发文本最长的规则，避免 "奇物" 和 "加权奇物" 的歧义。
         """
 
         if merge_text_fn is None:
@@ -96,6 +97,8 @@ class ActionEngine:
 
         names = list(action_list) if action_list else list(json_file.keys())
 
+        # 收集所有匹配的规则
+        matched_rules = []
         for name in names:
             for rule in json_file[name]:
                 trigger = rule["trigger"]
@@ -104,9 +107,14 @@ class ActionEngine:
                     redundancy=trigger.get("redundancy", 30),
                 )
                 if skip_check or (len(text) and trigger["text"] in merge_text_fn(text)):
-                    log.info(f"触发 {rule['name']}:{trigger['text']}")
-                    for act in rule["actions"]:
-                        self.do_action(act)
-                    return str(rule["name"])
+                    matched_rules.append(rule)
 
-        return ""
+        if not matched_rules:
+            return ""
+
+        # 选择触发文本最长的规则
+        best_rule = max(matched_rules, key=lambda r: len(r["trigger"]["text"]))
+        log.info(f"触发 {best_rule['name']}:{best_rule['trigger']['text']}")
+        for act in best_rule["actions"]:
+            self.do_action(act)
+        return str(best_rule["name"])

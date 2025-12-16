@@ -185,8 +185,8 @@
   {
     "name": "加权奇物选择",
     "trigger": {
-      "text": "奇物",
-      "box": [94, 240, 58, 84],
+      "text": "加权奇物",
+      "box": [94, 256, 58, 84],
       "redundancy": 30
     },
     "actions": [
@@ -194,6 +194,20 @@
         "sleep": "0.6"
       },
       "weighted_curio"
+    ]
+  },
+  {
+    "name": "奇物选择",
+    "trigger": {
+      "text": "奇物",
+      "box": [94, 256, 58, 84],
+      "redundancy": 30
+    },
+    "actions": [
+      {
+        "sleep": "0.6"
+      },
+      "curio"
     ]
   },
   {
