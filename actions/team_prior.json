@@ -1,0 +1,220 @@
+{
+  "description": "队伍类型优先级配置，权重中等，高于角色配置，低于全局配置",
+  "追击": {
+    "blessing": {
+      "whitelist": {
+        "巡猎": 5,
+        "追击": 5,
+        "回味": 5,
+        "欢愉": 5,
+        "追加攻击": 5
+      },
+      "blacklist": {}
+    },
+    "equation": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "boon": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "curio": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "weighted_curio": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "other": {
+      "whitelist": {},
+      "blacklist": {}
+    }
+  },
+  "dot": {
+    "blessing": {
+      "whitelist": {
+        "虚无": 5,
+        "持续伤害": 5
+      },
+      "blacklist": {}
+    },
+    "equation": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "boon": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "curio": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "weighted_curio": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "other": {
+      "whitelist": {},
+      "blacklist": {}
+    }
+  },
+  "终结技": {
+    "blessing": {
+      "whitelist": {
+        "智识": 5,
+        "终结技": 5,
+        "罐中脑": 5,
+        "行动提前": 5,
+        "超频": 5,
+        "会心": 5,
+        "战意": 5
+      },
+      "blacklist": {}
+    },
+    "equation": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "boon": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "curio": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "weighted_curio": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "other": {
+      "whitelist": {},
+      "blacklist": {}
+    }
+  },
+  "击破": {
+    "blessing": {
+      "whitelist": {
+        "远航监护员": 5,
+        "废土客": 5,
+        "不沉巨舰": 5,
+        "焦土行者": 5,
+        "毁灭": 5,
+        "火": 5,
+        "击破": 5,
+        "虚无": 5,
+        "存护": 5
+      },
+      "blacklist": {}
+    },
+    "equation": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "boon": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "curio": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "weighted_curio": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "other": {
+      "whitelist": {},
+      "blacklist": {}
+    }
+  },
+  "盾反": {
+    "blessing": {
+      "whitelist": {
+        "存护": 5,
+        "反震": 5,
+        "护盾": 5,
+        "战技": 5,
+        "蝶魄": 5,
+        "魂茧": 5
+      },
+      "blacklist": {}
+    },
+    "equation": {
+      "whitelist": {
+        "存护": 5,
+        "反震": 5,
+        "护盾": 5,
+        "战技": 5,
+        "蝶魄": 5,
+        "魂茧": 5
+      },
+      "blacklist": {}
+    },
+    "boon": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "curio": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "weighted_curio": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "other": {
+      "whitelist": {},
+      "blacklist": {}
+    }
+  },
+  "白厄盾丹": {
+    "blessing": {
+      "whitelist": {
+        "白羽": 5,
+        "耀变": 5,
+        "繁育": 5
+      },
+      "blacklist": {}
+    },
+    "equation": {
+      "whitelist": {
+        "不死鸟": 5,
+        "天慧巨树": 5,
+        "北国狼母": 5,
+        "金实": 5,
+        "辉光水母": 5
+      },
+      "blacklist": {}
+    },
+    "boon": {
+      "whitelist": {
+        "缇宝": 5,
+        "白厄": 5,
+        "刻律": 5
+      },
+      "blacklist": {}
+    },
+    "curio": {
+      "whitelist": {},
+      "blacklist": {}
+    },
+    "weighted_curio": {
+      "whitelist": {
+        "神之足迹": 5,
+        "自娱自乐": 5,
+        "反物质引擎控制器": 5,
+        "毁灭": 4,
+        "物理": 4
+      },
+      "blacklist": {}
+    },
+    "other": {
+      "whitelist": {},
+      "blacklist": {}
+    }
+  }
+}

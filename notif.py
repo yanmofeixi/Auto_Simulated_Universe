@@ -4,11 +4,11 @@ import time
 from PIL import Image
 from pystray import Icon, MenuItem as item
 import threading
-import pygame
 import sys
-import os
 from winotify import Notification
-import psutil
+
+from utils.common.notif_file import read_notif_file
+from utils.common.notif_file import write_notif_file
 
 def notif(title,msg):
     Notification(app_id="椰羊自动化",title=title,msg=msg,icon=os.getcwd() + "\\imgs\\icon.png").show()
@@ -18,30 +18,29 @@ def exit_program(icon, item):
     os._exit(0)
 
 def maopao(icon=None, item=None):
-    file_name = 'logs/notif.txt'
-    cnt='0'
-    tm=None
-    if os.path.exists(file_name):
-        with open(file_name, 'r', encoding="utf-8",errors='ignore') as file:
-            s=file.readlines()
-            cnt=s[0].strip('\n')
-            try:
-                tm=s[3].strip('\n')
-            except:
-                pass
-    if tm is None:
+    cnt, _title, _msg, tm = read_notif_file(file_name="logs/notif.txt")
+    if not cnt:
+        cnt = "0"
+    if not tm:
         tm = str(time.time())
-    os.makedirs('logs',exist_ok=1)
-    with open(file_name, 'w', encoding="utf-8") as file:
-        file.write(f"{cnt}\n喵\n计数:{cnt}\n{tm}")
+
+    write_notif_file(
+        title="喵",
+        msg=f"计数:{cnt}",
+        cnt=cnt,
+        tm=tm,
+        file_name="logs/notif.txt",
+    )
 
 
 def clear(icon=None, item=None):
-    file_name = 'logs/notif.txt'
-    tm = time.time()
-    if os.path.exists(file_name):
-        with open(file_name, 'w', encoding="utf-8",errors='ignore') as file:
-            file.write('0\n清零\n计数:0\n{tm}')
+    write_notif_file(
+        title="清零",
+        msg="计数:0",
+        cnt="0",
+        tm=str(time.time()),
+        file_name="logs/notif.txt",
+    )
             
 def notify():
     file_name = 'logs/notif.txt'
@@ -58,39 +57,6 @@ def notify():
                 notif(s[1].strip('\n'),s[2].strip('\n'))
             last = os.path.getmtime(file_name)
 
-running = 0
-
-def genshin():
-    global running
-    running = 1
-    pygame.init()
-    if getattr(sys, 'frozen', False):
-        base_path = sys._MEIPASS
-    else:
-        base_path = os.path.abspath(".")
-    audio_file = os.path.join(base_path, "start.mp3")
-    pygame.mixer.music.load(audio_file)
-    initial_volume = 0.3
-    pygame.mixer.music.set_volume(initial_volume)
-    st = 0
-    while running:
-        f = 0
-        for process in psutil.process_iter(['name']):
-            if process.info['name'] == 'YuanShen.exe':
-                f = 1
-        if st == 0 and f == 1:
-            pygame.mixer.music.play()
-        st = f
-        time.sleep(0.1)
-
-def start():
-    global running
-    if not running:
-        t_start = threading.Thread(target=genshin)
-        t_start.start()
-    else:
-        running = 0
-
 def main():
     # 检测程序是否已经在运行
     mutex = ctypes.windll.kernel32.CreateMutexW(None, False, "YEYANG_MyProgramMutex")
@@ -104,7 +70,6 @@ def main():
     menu = (
         item('冒泡', maopao),
         item('清零', clear),
-        item('原神，启动', start),
         item('退出', exit_program),
     )
     icon.menu = menu

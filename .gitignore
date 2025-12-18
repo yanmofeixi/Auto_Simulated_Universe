@@ -1,9 +1,12 @@
 __pycache__/
+.venv/
 venv/
 .idea/
 .vscode/
 build/
 dist/
+img/
+test.*
 *.spec
 imgs/bigmap.jpg
 imgs/bwmap.jpg
@@ -21,6 +24,7 @@ imgs/tmp5.jpg
 imgs/tmp6.jpg
 imgs/collect
 logs/
+!logs/window_debug.log
 my_map
 .notif
 check0.txt
@@ -41,3 +45,5 @@ bw.jpg
 tp.jpg
 tp
 utils/mylib/
+update.py
+update.bat
