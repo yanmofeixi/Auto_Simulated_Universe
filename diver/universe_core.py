@@ -656,7 +656,7 @@ class DivergentUniverse(UniverseUtils):
                 time.sleep(3)
         time.sleep(0.8)
 
-        if self.area_state == 0:
+        if self.area_state == 0 and area_now != "首领":
             prepare_active_character(self, area_now)
 
         self.get_screen()
