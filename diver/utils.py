@@ -1,7 +1,7 @@
 """模拟宇宙工具模块.
 
-该模块提供模拟宇宙自动化所需的基础工具类,包括屏幕管理、
-输入控制、小地图导航、模板匹配等功能.
+该模块提供模拟宇宙自动化所需的基础工具类,包括屏幕管理,
+输入控制,小地图导航,模板匹配等功能.
 
 Classes:
     UniverseUtils: 模拟宇宙工具基类
@@ -549,7 +549,7 @@ class UniverseUtils:
     def get_screen(self):
         hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
         Text = win32gui.GetWindowText(hwnd)
-        while Text != "崩坏：星穹铁道" and Text != "云·星穹铁道" and not self._stop:
+        while Text != "崩坏：星穹铁道" and Text != "云.星穹铁道" and not self._stop:
             log.warning("等待游戏窗口")
             time.sleep(0.5)
             hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
@@ -557,7 +557,7 @@ class UniverseUtils:
         self.screen = self.sct.grab(self.x0, self.y0)
         return self.screen
 
-    # 移动视角,获得小地图中不变的部分(白线、灰块)
+    # 移动视角,获得小地图中不变的部分(白线,灰块)
     def take_fine_minimap(self, n=5, dt=0.01, dy=200):
         return common_take_fine_minimap(
             get_screen=self.get_screen,
@@ -582,7 +582,7 @@ class UniverseUtils:
         if local_screen is None:
             local_screen = self.get_local(0.9333, 0.8657, shape)
         bw_map = np.zeros(local_screen.shape[:2], dtype=np.uint8)
-        # 灰块、白线:小地图中的可移动区域、可移动区域的边缘
+        # 灰块,白线:小地图中的可移动区域,可移动区域的边缘
         # b_map:当前像素点是否是灰块.只允许灰块附近(2像素)的像素被识别为白线
         b_map = deepcopy(bw_map)
         b_map[
@@ -861,7 +861,7 @@ class UniverseUtils:
                 return
             self.get_loc(bw_map, rg=30, offset=self.get_offset(4))
             self.get_real_loc(1)
-            # 复杂的定位、寻路过程
+            # 复杂的定位,寻路过程
             ds = self.get_dis(self.real_loc, loc)
             dls = [100000]
             dtm = [time.time()]

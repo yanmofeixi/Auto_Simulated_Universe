@@ -159,7 +159,7 @@ def try_avoid_obstacle(universe, keyops, log, retry_count: int) -> tuple:
     Returns:
         (是否成功, 新的重试次数)
     """
-    directions = " da"  # 空格、d、a
+    directions = " da"  # 空格,d,a
 
     if retry_count > 0:
         keyops.keyUp("w")

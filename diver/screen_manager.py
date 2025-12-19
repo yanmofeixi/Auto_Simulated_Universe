@@ -31,7 +31,7 @@ class ScreenManager:
     """
 
     # 支持的游戏窗口标题
-    GAME_WINDOW_TITLES = ("崩坏：星穹铁道", "云·星穹铁道")
+    GAME_WINDOW_TITLES = ("崩坏：星穹铁道", "云.星穹铁道")
 
     def __init__(
         self,

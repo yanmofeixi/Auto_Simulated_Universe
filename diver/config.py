@@ -11,7 +11,7 @@ class Config(ConfigBase):
     """差分宇宙配置类.
 
     继承自 ConfigBase,添加差分宇宙特有的配置项.
-    从 data/ 目录加载静态数据 (角色列表、视角角度表等).
+    从 data/ 目录加载静态数据 (角色列表,视角角度表等).
 
     Attributes:
         skill_char (list): 秘技角色列表
@@ -48,7 +48,7 @@ class Config(ConfigBase):
         # 队伍类型
         self.team = defaults["default_team"]
 
-        # OCR 是否使用 GPU 加速（小模型场景下 CPU 反而更快）
+        # OCR 是否使用 GPU 加速(小模型场景下 CPU 反而更快)
         self.ocr_use_gpu = False
 
         # 读取配置
@@ -74,7 +74,7 @@ class Config(ConfigBase):
 
     @property
     def angles(self) -> List[int]:
-        """视角角度映射表 (从 data/angles.json 延迟加载，已反转)."""
+        """视角角度映射表 (从 data/angles.json 延迟加载,已反转)."""
         if Config._angles is None:
             data = self.load_data_file("angles.json")
             Config._angles = data.get("portal_angles", [])[::-1]

@@ -11,7 +11,7 @@ from diver.config import config
 
 
 def handle_battle_area(universe) -> None:
-    """处理【战斗】区域."""
+    """处理[战斗]区域."""
 
     # 如果大黑塔秘技使能,先使用秘技,前面应该已经切换到了大黑塔
     if universe.da_hei_ta and universe.allow_e and not universe.da_hei_ta_effecting:
@@ -55,7 +55,7 @@ def handle_battle_area(universe) -> None:
 
 
 def handle_boss_area(universe) -> int | None:
-    """处理【首领】区域.
+    """处理[首领]区域.
 
     返回值:
     - `1`:本次探索结束.

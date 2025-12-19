@@ -11,7 +11,7 @@ class Config(ConfigBase):
     """模拟宇宙配置类.
 
     继承自 ConfigBase,添加模拟宇宙特有的配置项.
-    从 data/ 目录加载静态数据 (命途列表、默认 prior 等).
+    从 data/ 目录加载静态数据 (命途列表,默认 prior 等).
 
     Attributes:
         order_text (str): 命途优先级顺序

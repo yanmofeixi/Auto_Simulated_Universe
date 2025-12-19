@@ -1,7 +1,7 @@
 """通用图像/模板匹配工具(diver/simul 共享).
 
 当前阶段采取“最小抽离”策略:
-- 先抽 diver/simul 中实现完全一致、且不依赖 UniverseUtils 状态的函数.
+- 先抽 diver/simul 中实现完全一致,且不依赖 UniverseUtils 状态的函数.
 - 后续再逐步抽 click_target/check_box/get_local 等更高层逻辑.
 
 注意:

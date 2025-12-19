@@ -1,6 +1,6 @@
 """diver/simul 共享的应用级小工具.
 
-目前抽离范围(低风险、收益高):
+目前抽离范围(低风险,收益高):
 - notif:写入 logs/notif.txt 供通知插件读取
 - set_forground:读取 config 并尝试将游戏窗口置前台
 

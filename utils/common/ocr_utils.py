@@ -143,7 +143,7 @@ OcrItem = dict[str, Any]
 def sort_ocr_items(items: List[OcrItem]) -> List[OcrItem]:
     """对 OCR 识别结果按位置排序.
 
-    按照从上到下、从左到右的顺序排列.
+    按照从上到下,从左到右的顺序排列.
     同一行(y 坐标差 <= 7)的项目按 x 坐标排序.
 
     Args:

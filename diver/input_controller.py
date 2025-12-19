@@ -18,7 +18,7 @@ import win32con
 class InputController:
     """输入控制器.
 
-    封装键鼠输入操作,支持视角旋转、点击等功能.
+    封装键鼠输入操作,支持视角旋转,点击等功能.
 
     Attributes:
         multi: 鼠标灵敏度倍率

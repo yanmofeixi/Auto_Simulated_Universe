@@ -2,10 +2,10 @@
 
 抽离点:
 - diver/simul 的 UniverseUtils.check() 逻辑几乎一致
-- 差异主要在:路径前缀、少量 debug 写文件、以及调用方如何存储 tx/ty/tm
+- 差异主要在:路径前缀,少量 debug 写文件,以及调用方如何存储 tx/ty/tm
 
 本模块提供纯函数:
-- 只负责读取模板、按 scx 缩放、裁剪局部区域并做 matchTemplate
+- 只负责读取模板,按 scx 缩放,裁剪局部区域并做 matchTemplate
 - 返回 (max_val, tx, ty, local_screen)
 
 调用方(diver/simul)再决定:

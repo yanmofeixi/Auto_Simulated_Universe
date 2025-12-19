@@ -8,7 +8,7 @@
 import sys
 
 if __name__ == "__main__":
-    # 如果传入 --elevated 参数，直接运行（已从 GUI 以管理员身份启动）
+    # 如果传入 --elevated 参数,直接运行(已从 GUI 以管理员身份启动)
     if "--elevated" in sys.argv:
         from simul.app import main
         main()

@@ -10,7 +10,7 @@ import diver.keyops as keyops
 
 
 def handle_rest_area(universe) -> None:
-    """处理【休整】区域."""
+    """处理[休整]区域."""
 
     pyautogui.click()
     universe.check_pop(timeout_s=3.0, poll_interval_s=0.5, after_action_sleep_s=0.3)
@@ -24,7 +24,7 @@ def handle_rest_area(universe) -> None:
 
 
 def handle_shop_area(universe) -> None:
-    """处理【商店】区域."""
+    """处理[商店]区域."""
 
     pyautogui.click()
     universe.check_pop(timeout_s=3.0, poll_interval_s=0.5, after_action_sleep_s=0.3)
@@ -38,7 +38,7 @@ def handle_shop_area(universe) -> None:
 
 
 def handle_wealth_area(universe) -> None:
-    """处理【财富】区域."""
+    """处理[财富]区域."""
 
     keyops.keyDown('w')
     time.sleep(1.6)
@@ -62,7 +62,7 @@ def handle_wealth_area(universe) -> None:
 
 
 def handle_plane_area(universe) -> None:
-    """处理【位面】区域."""
+    """处理[位面]区域."""
 
     pyautogui.click()
     time.sleep(2)

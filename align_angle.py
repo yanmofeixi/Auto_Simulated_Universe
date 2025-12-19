@@ -19,7 +19,7 @@ def get_angle(su, safe):
     return su.get_now_direc(local_screen)
 
 
-# 不同电脑鼠标移动速度、放缩比、分辨率等不同,因此需要校准
+# 不同电脑鼠标移动速度,放缩比,分辨率等不同,因此需要校准
 # 基本逻辑:每次转60度,然后计算实际转了几度,计算出误差比
 def main(cnt=10, safe=0, ang=[1,1,3], su=None):
     if su is None or 'Diver' in su.__class__.__name__:

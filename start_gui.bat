@@ -4,13 +4,13 @@ echo ========================================
 echo   Auto Simulated Universe - GUI 启动器
 echo ========================================
 echo.
-echo 提示: 如果想隐藏此窗口，请使用 start_gui.vbs
+echo 提示: 如果想隐藏此窗口,请使用 start_gui.vbs
 echo.
 
 :: 检查 Python 是否安装
 python --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [错误] 未检测到 Python，请先安装 Python 3.11+
+    echo [错误] 未检测到 Python,请先安装 Python 3.11+
     echo 下载地址: https://www.python.org/downloads/
     pause
     exit /b 1

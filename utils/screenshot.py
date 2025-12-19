@@ -49,7 +49,7 @@ class Screen():
                 self.gdi.BitBlt(self.memdc, 0, 0, self.width, self.height, self.srcdc, x, y, 0x40CC0020)
                 bits = self.gdi.GetDIBits(self.memdc, self.bmp, 0, self.height, self.data, self.bmi, 0)
                 if bits != self.height:
-                    log.info('截图失败！')
+                    log.info('截图失败!')
                     time.sleep(0.05)
                     continue
                 return np.frombuffer(bytearray(self.data), dtype=np.uint8).reshape((self.height,self.width,4))[:,:,:3]

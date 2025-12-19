@@ -27,8 +27,8 @@ def clean_text(text: str, char: int = 1) -> str:
     """
 
     symbols = (
-        r"[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~—“”‘’«»„…·¿¡£¥€©®™°±÷×¶§‰]"
-        ",.！？;:()【】「」《》、￥ "
+        r"[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~-“”‘’«»„....¿¡£¥€©®™°±÷×¶§‰]"
+        ",.!?;:()[]""<>,$ "
     )
     if char:
         symbols += r"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

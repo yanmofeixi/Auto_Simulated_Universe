@@ -41,7 +41,7 @@ def _find_choice_text(universe):
 def _find_weighted_curio_text(universe):
     """获取加权奇物选择候选区域的 OCR 文本块.
 
-    加权奇物优先检测屏幕中间区域，然后再检测靠下区域。
+    加权奇物优先检测屏幕中间区域,然后再检测靠下区域.
 
     Returns:
         (middle_text, text): middle_text 是屏幕中间识别的文字(用于打印),
@@ -74,7 +74,7 @@ def _build_candidates(universe, text, score_fn, fallback_score_fn=None):
     candidates = []
     for item in text:
         orig_box = item["box"]
-        name = item.get("raw_text", "")  # 原始识别的文字（名称）
+        name = item.get("raw_text", "")  # 原始识别的文字(名称)
         x = (orig_box[0] + orig_box[1]) // 2  # 用于排序的 x 坐标
         box = [x - 220, x + 220, 450, 850]  # 扩展后的区域
 
@@ -82,7 +82,7 @@ def _build_candidates(universe, text, score_fn, fallback_score_fn=None):
         choice_raw_text = universe.merge_text(choice_text, char=0)
         score = score_fn(choice_raw_text)
 
-        # 如果主打分为 0 且有备用打分函数，使用备用打分
+        # 如果主打分为 0 且有备用打分函数,使用备用打分
         if score == 0 and fallback_score_fn:
             score = fallback_score_fn(choice_raw_text)
 
@@ -127,7 +127,7 @@ def _print_bottom_text(bottom_text, candidates):
 def _print_middle_text(middle_text, candidates):
     """按从左到右顺序打印屏幕中间识别的文字及其对应的分数.
 
-    专用于加权奇物的日志输出。
+    专用于加权奇物的日志输出.
 
     Args:
         middle_text: 屏幕中间识别的 OCR 文本块
@@ -299,7 +299,7 @@ def handle_boon(universe) -> None:
         _print_bottom_text(bottom_text, candidates)
         # 在区域 [650, 750, 900, 1000] 寻找刷新按钮图片并点击
         if not universe.click_img("divergent/refresh_boon"):
-            # 找不到图片，直接点击坐标
+            # 找不到图片,直接点击坐标
             universe.click_position([712, 965])
 
         time.sleep(0.8)
@@ -342,7 +342,7 @@ def handle_curio(universe) -> None:
 def handle_weighted_curio(universe) -> None:
     """处理加权奇物选择.
 
-    加权奇物优先检测屏幕中间区域，然后再检测靠下区域。
+    加权奇物优先检测屏幕中间区域,然后再检测靠下区域.
     如果所有候选的 score 都为 0,尝试点击"覆写"按钮刷新选项后再选择.
 
     Args:
@@ -380,7 +380,7 @@ def handle_weighted_curio(universe) -> None:
                 break
 
         if not clicked:
-            # 找不到文字，直接点击坐标
+            # 找不到文字,直接点击坐标
             universe.click_position([1342, 979])
 
         time.sleep(0.8)
@@ -395,7 +395,7 @@ def handle_weighted_curio(universe) -> None:
             universe, text, universe.weighted_curio_score, universe.other_score
         )
 
-    # 打印最终的候选（刷新后或原始）
+    # 打印最终的候选(刷新后或原始)
     _print_middle_text(middle_text, candidates)
 
     candidates = sorted(candidates, key=lambda x: x["score"], reverse=True)

@@ -22,7 +22,7 @@ from diver.config import config as diver_config
 class My_TS:
     def __init__(self, lang: str = "ch", father: Any = None, use_gpu: bool | None = None):
         self.lang = lang
-        # 如果未指定 use_gpu，则从配置文件读取
+        # 如果未指定 use_gpu,则从配置文件读取
         if use_gpu is None:
             use_gpu = diver_config.ocr_use_gpu
         self.ts = ONNXPaddleOcr(use_angle_cls=False, cpu=not use_gpu, use_gpu=use_gpu)
@@ -165,7 +165,7 @@ class text_keys:
         self.blessings = diver_config.get_blessings_by_fate()
         self.secondary = diver_config.get_secondary_fates()
 
-        # 从 config 读取用户配置，覆盖默认值
+        # 从 config 读取用户配置,覆盖默认值
         data = diver_config.load_yaml()
         if data:
             prior = data.get("prior")

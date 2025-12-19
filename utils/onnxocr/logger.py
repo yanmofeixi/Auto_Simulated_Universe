@@ -20,7 +20,7 @@ class Logger:
         streamHandler = logging.StreamHandler()
         streamHandler.setLevel(logging.DEBUG)
         formatPrint = logging.Formatter(
-            '【%(levelname)s】 %(message)s')
+            '[%(levelname)s] %(message)s')
         streamHandler.setFormatter(formatPrint)
         # self.logger.addHandler(streamHandler)
 
@@ -30,7 +30,7 @@ class Logger:
         fileHandler.setLevel(logging.ERROR)
         formatFile = logging.Formatter(
             '''
-【%(levelname)s】 %(asctime)s
+[%(levelname)s] %(asctime)s
 %(message)s
     文件:%(module)s | 函数:%(funcName)s | 行号:%(lineno)d
     线程id:%(thread)d | 线程名:%(thread)s''')

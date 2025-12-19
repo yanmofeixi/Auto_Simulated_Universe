@@ -31,7 +31,7 @@ async function checkServer() {
   } catch (e) {
     document.getElementById("serverStatusText").textContent = "未连接";
     document.getElementById("serverStatusText").style.color = "var(--danger)";
-    showStatus("服务器未启动，请先运行 gui_server.py", "error");
+    showStatus("服务器未启动,请先运行 gui_server.py", "error");
   }
 }
 
@@ -168,14 +168,14 @@ function initSkillSelector() {
   }
 }
 
-// 初始化传送门优先级（拖拽排序）
+// 初始化传送门优先级(拖拽排序)
 function initPortalPriority() {
   const container = document.getElementById("portalPriorityList");
   const portalPrior =
     config.config?.portal_prior || constants.default_portal_prior || {};
   const portalTypes = constants.portal_types || [];
 
-  // 按优先级排序（高优先级在前）
+  // 按优先级排序(高优先级在前)
   const sortedTypes = [...portalTypes].sort(
     (a, b) => (portalPrior[b] || 1) - (portalPrior[a] || 1)
   );
@@ -410,7 +410,7 @@ function collectFormData() {
     if (val) cfg.skill.push(val);
   }
 
-  // 收集传送门优先级（从拖拽排序列表）
+  // 收集传送门优先级(从拖拽排序列表)
   const portalItems = document.querySelectorAll(
     "#portalPriorityList .sortable-item"
   );
@@ -476,7 +476,7 @@ document.getElementById("configForm").addEventListener("submit", async (e) => {
 
     if (response.ok) {
       setDirty(false);
-      showStatus("配置保存成功！", "success");
+      showStatus("配置保存成功!", "success");
     } else {
       throw new Error("Save failed");
     }
@@ -488,7 +488,7 @@ document.getElementById("configForm").addEventListener("submit", async (e) => {
 
 // 重置配置
 async function resetConfig() {
-  if (!confirm("确定要重置为默认配置吗？")) return;
+  if (!confirm("确定要重置为默认配置吗?")) return;
 
   try {
     const response = await fetch(`${API_BASE}/api/config/reset`, {
@@ -519,14 +519,14 @@ async function launchProgram(mode) {
     });
     if (response.ok) {
       showStatus(
-        `${mode === "diver" ? "差分宇宙" : "模拟宇宙"}已启动！`,
+        `${mode === "diver" ? "差分宇宙" : "模拟宇宙"}已启动!`,
         "success"
       );
     } else {
       throw new Error("Launch failed");
     }
   } catch (e) {
-    showStatus("启动失败，请检查服务器状态", "error");
+    showStatus("启动失败,请检查服务器状态", "error");
   } finally {
     btn.disabled = false;
   }

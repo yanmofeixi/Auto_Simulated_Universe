@@ -144,7 +144,7 @@ class text_keys:
         self.blessings = simul_config.get_blessings_by_fate()
         self.secondary = simul_config.get_secondary_fates()
 
-        # 从 config 读取用户配置，覆盖默认值
+        # 从 config 读取用户配置,覆盖默认值
         data = simul_config.load_yaml()
         if data:
             prior = data.get("prior")

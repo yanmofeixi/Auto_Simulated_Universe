@@ -80,7 +80,7 @@ def print_exc():
 
 
 # ========== 窗口调试日志 ==========
-# 固定文件名，便于通过 git sync 获取调试信息
+# 固定文件名,便于通过 git sync 获取调试信息
 
 _WINDOW_DEBUG_LOG = logs_path / "window_debug.log"
 

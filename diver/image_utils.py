@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class ImageProcessor:
     """图像处理器.
 
-    提供图像变换、区域检测等功能.
+    提供图像变换,区域检测等功能.
     """
 
     @staticmethod

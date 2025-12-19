@@ -15,7 +15,7 @@ from typing import Optional
 def set_game_foreground(
     *,
     primary_title: str = "崩坏：星穹铁道",
-    secondary_title: str = "云·星穹铁道",
+    secondary_title: str = "云.星穹铁道",
     window_class: str = "UnityWndClass",
     is_frozen: bool = False,
 ) -> Optional[int]:
@@ -44,13 +44,13 @@ def set_game_foreground(
         hwnd = win32gui.FindWindow(window_class, primary_title)
 
         if hwnd == 0:
-            # 回退：只用 title 查找
+            # 回退:只用 title 查找
             hwnd = win32gui.FindWindow(None, secondary_title)
 
         if hwnd == 0:
             return None
 
-        # 找到窗口，尝试设为前台
+        # 找到窗口,尝试设为前台
         win32gui.SetForegroundWindow(hwnd)
         return int(hwnd)
 

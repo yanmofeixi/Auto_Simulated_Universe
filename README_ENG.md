@@ -35,13 +35,13 @@ According to miHoYo's [Honkai: Star Rail Fair Gaming Declaration](https://sr.mih
 
 ### 1. Install Dependencies
 
-It is recommended to use Anaconda to create a virtual environment:
+Install the required dependency libraries directly:
 
 ```bash
-conda create -n asu python=3.13 -y
-conda activate asu
 pip install -r requirements.txt
 ```
+
+> **Note**: If you encounter permission issues, please try running the terminal as an administrator or add the `--user` parameter after the command.
 
 ### 2. Launch GUI Configuration Panel
 

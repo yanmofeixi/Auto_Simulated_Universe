@@ -1,8 +1,8 @@
 """差分宇宙区域寻路与交互处理器.
 
 OCR匹配事件名逻辑:
-1. 进入房间，移动到合适位置
-2. 旋转视角用 OCR 匹配事件名，找到后旋转使其居中
+1. 进入房间,移动到合适位置
+2. 旋转视角用 OCR 匹配事件名,找到后旋转使其居中
 3. 按 W 前进 + 按 F 进入事件处理
 4. 处理完继续搜索第二个事件
 5. 完成后旋转视角搜索传送门离开
@@ -27,7 +27,7 @@ _EVENT_NAMES_CACHE: Optional[List[str]] = None
 
 
 def _load_event_names() -> List[str]:
-    """加载事件名列表，使用缓存避免重复读取."""
+    """加载事件名列表,使用缓存避免重复读取."""
     global _EVENT_NAMES_CACHE
     if _EVENT_NAMES_CACHE is None:
         try:
@@ -46,7 +46,7 @@ _load_event_names()
 
 
 def _fuzzy_match_event_name(ocr_text: str, event_names: List[str]) -> Optional[str]:
-    """使用 fuzzy match 查找匹配的事件名，优先返回最长匹配."""
+    """使用 fuzzy match 查找匹配的事件名,优先返回最长匹配."""
     if not ocr_text or len(ocr_text) < 2:
         return None
     
@@ -59,7 +59,7 @@ def _fuzzy_match_event_name(ocr_text: str, event_names: List[str]) -> Optional[s
 
 
 def _ocr_screen_for_event_names(universe) -> List[Tuple[str, int, int]]:
-    """对屏幕进行 OCR，返回匹配的事件列表 [(事件名, x, y), ...]."""
+    """对屏幕进行 OCR,返回匹配的事件列表 [(事件名, x, y), ...]."""
     event_names = _load_event_names()
     if not event_names:
         return []
@@ -86,7 +86,7 @@ def _ocr_screen_for_event_names(universe) -> List[Tuple[str, int, int]]:
 
 
 def _rotate_and_search_event(universe, max_steps: int = 8) -> Optional[Tuple[str, int, int]]:
-    """旋转视角搜索事件名，返回 (事件名, x, y) 或 None."""
+    """旋转视角搜索事件名,返回 (事件名, x, y) 或 None."""
     rotation_angles = [0, 45, 45, 45, 45, -90, -90, -90, -90]
     
     log.info("[OCR事件匹配] 开始旋转搜索事件名...")
@@ -102,7 +102,7 @@ def _rotate_and_search_event(universe, max_steps: int = 8) -> Optional[Tuple[str
             log.info(f"[OCR事件匹配] 第 {i} 次旋转找到: '{event_name}' @ ({x}, {y})")
             return (event_name, x, y)
     
-    log.info("[OCR事件匹配] 旋转搜索完毕，未找到事件")
+    log.info("[OCR事件匹配] 旋转搜索完毕,未找到事件")
     return None
 
 
@@ -121,7 +121,7 @@ def _center_event_in_view(universe, event_x: int, screen_center: int = 960) -> N
 
 
 def _approach_and_interact_event(universe, max_time: float = 10.0) -> bool:
-    """向事件前进并尝试交互，返回是否成功进入事件."""
+    """向事件前进并尝试交互,返回是否成功进入事件."""
     log.info("[OCR事件匹配] 向事件前进...")
     
     start_time = time.time()
@@ -135,7 +135,7 @@ def _approach_and_interact_event(universe, max_time: float = 10.0) -> bool:
         universe.get_screen()
         
         if universe.check_f(is_in=["事件", "奖励", "遭遇", "交易"]):
-            log.info("[OCR事件匹配] 检测到交互，按 F")
+            log.info("[OCR事件匹配] 检测到交互,按 F")
             universe.press('f')
             time.sleep(0.8)
             
@@ -159,12 +159,12 @@ def _approach_and_interact_event(universe, max_time: float = 10.0) -> bool:
         
         attempts += 1
     
-    log.info(f"[OCR事件匹配] 接近超时，尝试 {attempts} 次")
+    log.info(f"[OCR事件匹配] 接近超时,尝试 {attempts} 次")
     return False
 
 
 def _handle_event_with_ocr(universe, event_number: int) -> bool:
-    """使用 OCR 处理单个事件，返回是否成功."""
+    """使用 OCR 处理单个事件,返回是否成功."""
     log.info(f"[OCR事件匹配] === 搜索第 {event_number} 个事件 ===")
     
     event_info = _rotate_and_search_event(universe)
@@ -206,7 +206,7 @@ def _handle_event_with_ocr(universe, event_number: int) -> bool:
 
 
 def _initial_movement(universe) -> bool:
-    """初始移动到合适位置，返回是否成功."""
+    """初始移动到合适位置,返回是否成功."""
     log.info("[事件房处理] 初始移动...")
     
     keyops.keyDown('w')
@@ -219,7 +219,7 @@ def _initial_movement(universe) -> bool:
         events = universe.get_text_position()
         if events:
             keyops.keyUp('w')
-            # 稍微后退一点，避免走太近
+            # 稍微后退一点,避免走太近
             universe.press('s', 0.5)
             time.sleep(0.3)
             
@@ -235,7 +235,7 @@ def _initial_movement(universe) -> bool:
                 time.sleep(0.2)
             
             if best_events and best_events[0][0] < 1600:
-                log.info(f"[事件房处理] 初始移动完成，检测到位置: {best_events}")
+                log.info(f"[事件房处理] 初始移动完成,检测到位置: {best_events}")
                 
                 # 调整视角
                 if not (933 <= best_events[0][0] <= 972):
@@ -257,7 +257,7 @@ def _initial_movement(universe) -> bool:
 
 
 def handle_event_reward_encounter(universe):
-    """处理【事件/奖励/遭遇】区域.
+    """处理[事件/奖励/遭遇]区域.
     
     - state=0: 初始移动 + OCR搜索处理第一个事件
     - state=1: OCR搜索处理第二个事件
@@ -281,16 +281,16 @@ def handle_event_reward_encounter(universe):
         # 检查是否已有传送门
         portal = universe.find_portal()
         if portal['nums'] > 0:
-            log.info("[事件房处理] 已有传送门，跳过事件处理")
+            log.info("[事件房处理] 已有传送门,跳过事件处理")
             universe.area_state = 2
             return None
         
         # OCR 搜索并处理第一个事件
         if _handle_event_with_ocr(universe, 1):
-            log.info("[事件房处理] 第一个事件完成，进入 state=1")
+            log.info("[事件房处理] 第一个事件完成,进入 state=1")
             universe.area_state = 1
         else:
-            log.info("[事件房处理] 未找到事件，进入 state=2")
+            log.info("[事件房处理] 未找到事件,进入 state=2")
             universe.area_state = 2
 
     elif universe.area_state == 1:

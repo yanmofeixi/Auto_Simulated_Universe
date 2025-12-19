@@ -22,7 +22,7 @@ from typing import Dict, Iterable, Mapping, Optional
 # 队伍类型配置的权重乘数
 TEAM_PRIORITY_MULTIPLIER = 5
 
-# 全局配置的权重乘数，确保全局配置具有最高优先级
+# 全局配置的权重乘数,确保全局配置具有最高优先级
 GLOBAL_PRIORITY_MULTIPLIER = 10
 
 

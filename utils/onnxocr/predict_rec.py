@@ -3,7 +3,7 @@ import numpy as np
 import math
 from PIL import Image
 
-# Pillow 10+：推荐使用 Image.Resampling；旧版本保留常量。
+# Pillow 10+:推荐使用 Image.Resampling;旧版本保留常量.
 try:
     from PIL.Image import Resampling as _PILResampling
 
@@ -26,7 +26,7 @@ class TextRecognizer(PredictBase):
         self.inverse = getattr(args, "rec_image_inverse", False)
         self.postprocess_op = CTCLabelDecode(character_dict_path=args.rec_char_dict_path, use_space_char=args.use_space_char)
 
-        # 初始化模型（CUDA 优先）
+        # 初始化模型(CUDA 优先)
         self.rec_onnx_session = self.get_onnx_session(args.rec_model_dir, args.use_gpu)
         self.rec_input_name = self.get_input_name(self.rec_onnx_session)
         self.rec_output_name = self.get_output_name(self.rec_onnx_session)

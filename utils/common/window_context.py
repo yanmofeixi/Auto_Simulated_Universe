@@ -1,7 +1,7 @@
 """Windows 游戏窗口上下文(diver/simul 共享).
 
 目标:
-- 统一 diver/simul 在 UniverseUtils.__init__ 里对窗口坐标、缩放、DPI 的计算
+- 统一 diver/simul 在 UniverseUtils.__init__ 里对窗口坐标,缩放,DPI 的计算
 - 把一大段重复的 win32 逻辑抽出来,减少两边维护成本
 
 设计原则:
@@ -50,7 +50,7 @@ class GameWindowContext:
 def wait_for_game_window_context(
     *,
     primary_title: str = "崩坏：星穹铁道",
-    secondary_title: str = "云·星穹铁道",
+    secondary_title: str = "云.星穹铁道",
     window_class: str = "UnityWndClass",
     baseline_width: int = 1920,
     baseline_height: int = 1080,

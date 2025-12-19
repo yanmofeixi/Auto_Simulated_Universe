@@ -1,7 +1,7 @@
 ﻿"""差分宇宙自动化核心实现.
 
-该模块实现差分宇宙的完整自动化流程,包括区域导航、事件处理、
-祝福选择、战斗触发等功能.
+该模块实现差分宇宙的完整自动化流程,包括区域导航,事件处理,
+祝福选择,战斗触发等功能.
 
 Classes:
     DivergentUniverse: 差分宇宙自动化控制器
@@ -223,7 +223,7 @@ class DivergentUniverse(UniverseUtils):
             Text = win32gui.GetWindowText(hwnd)
             warn_game = False
             cnt = 0
-            while Text != "崩坏：星穹铁道" and Text != "云·星穹铁道" and not self._stop:
+            while Text != "崩坏：星穹铁道" and Text != "云.星穹铁道" and not self._stop:
                 self.lst_changed = time.time()
                 if self._stop:
                     raise KeyboardInterrupt

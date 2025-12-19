@@ -94,7 +94,7 @@ class SimulatedUniverse(UniverseUtils):
             os.mkdir(self.map_file)
 
     def route(self):
-        """主循环:等待游戏窗口、识别界面并驱动状态机."""
+        """主循环:等待游戏窗口,识别界面并驱动状态机."""
         self.threshold = config.default_threshold
         self.battle = 0
         self.quit = 0
@@ -113,7 +113,7 @@ class SimulatedUniverse(UniverseUtils):
             Text = win32gui.GetWindowText(hwnd)
             warn_game = False
             cnt = 0
-            while Text != "崩坏：星穹铁道" and Text != "云·星穹铁道" and not self._stop:
+            while Text != "崩坏：星穹铁道" and Text != "云.星穹铁道" and not self._stop:
                 self.lst_changed = time.time()
                 if self._stop:
                     raise KeyboardInterrupt
@@ -292,7 +292,7 @@ class SimulatedUniverse(UniverseUtils):
             return 1
         # F交互界面
         elif self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
-            # is_killed:是否是禁用交互(沉浸奖励、复活装置、下载装置)
+            # is_killed:是否是禁用交互(沉浸奖励,复活装置,下载装置)
             is_killed = 0
             time.sleep(0.4)
             self.get_screen()
@@ -439,7 +439,7 @@ class SimulatedUniverse(UniverseUtils):
                 if self.floor == 12 or self.kl:
                     self.end_of_uni()
                     self.click((0.2708, 0.1324))
-                    log.info(f"通关！当前层数:{self.floor+1}")
+                    log.info(f"通关!当前层数:{self.floor+1}")
                 elif self.fail_count <= 1:
                     notif("暂离", f"地图{self.now_map},当前层数:{self.floor+1}")
                     map_log.error(
