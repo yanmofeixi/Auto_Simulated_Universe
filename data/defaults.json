@@ -1,5 +1,10 @@
 {
   "threshold": 0.97,
+  "scoring": {
+    "team_priority_multiplier": 5,
+    "global_priority_multiplier": 10,
+    "event_weights": [2, 1, -10]
+  },
   "accuracy": 1440,
   "default_team": "终结技",
   "default_long_range_slot": "1",

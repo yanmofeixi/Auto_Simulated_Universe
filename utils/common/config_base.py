@@ -5,6 +5,7 @@
 - 配置文件读写的基础逻辑
 - 按键映射处理
 - JSON 数据文件加载
+- 游戏窗口常量
 
 供 simul 和 diver 的 Config 类继承复用.
 """
@@ -19,10 +20,32 @@ from typing import Any, Dict, List, Optional, Union
 import yaml
 
 
+# ===== 游戏窗口常量 =====
+GAME_TITLE_PRIMARY = "崩坏：星穹铁道"
+GAME_TITLE_SECONDARY = "云.星穹铁道"
+GAME_WINDOW_CLASS = "UnityWndClass"
+BASELINE_WIDTH = 1920
+BASELINE_HEIGHT = 1080
+FULLSCREEN_OFFSET_PX = 9
+
+
+def is_game_window(title: str) -> bool:
+    """判断窗口标题是否属于游戏窗口.
+
+    Args:
+        title: 窗口标题字符串
+
+    Returns:
+        如果是游戏窗口返回 True，否则返回 False
+    """
+    return title == GAME_TITLE_PRIMARY or title == GAME_TITLE_SECONDARY
+
+
 class ConfigBase:
     """配置基类.
 
     提供 simul 和 diver 共享的配置功能.
+    所有默认值都从 data/defaults.json 读取.
 
     Attributes:
         abspath (str): 项目根目录路径
@@ -37,15 +60,16 @@ class ConfigBase:
     # ===== 类常量 =====
     DATA_DIR = "data"
 
-    # 默认配置常量 (从 data/defaults.json 加载)
-    DEFAULT_THRESHOLD = 0.97
-    DEFAULT_ACCURACY = 1440
-
     # 数据文件缓存 (类级别)
     _data_cache: Dict[str, Any] = {}
+    _defaults_loaded: bool = False
+    _defaults: Dict[str, Any] = {}
 
     def __init__(self):
-        """初始化配置基类."""
+        """初始化配置基类.
+
+        所有默认值从 data/defaults.json 读取.
+        """
         # 项目根目录
         self.abspath = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         if getattr(sys, "frozen", False):
@@ -54,14 +78,36 @@ class ConfigBase:
         # 配置文件
         self.text = "info.yml"
 
-        # 鼠标灵敏度和难度
-        self.angle = "1.0"
-        self.difficult = "5"
+        # 加载默认值
+        defaults = self._load_defaults()
+
+        # 鼠标灵敏度和难度 (从 defaults.json 读取)
+        self.angle = str(defaults.get("default_angle", 1.0))
+        self.difficult = str(defaults.get("default_difficulty", 5))
         self.allow_difficult = [1, 2, 3, 4, 5]
 
-        # 时区设置
-        self.timezones = ["America", "Asia", "Europe", "Default"]
-        self.timezone = "Default"
+        # 时区设置 (从 defaults.json 读取)
+        timezones_data = defaults.get("timezones", [])
+        self.timezones = [tz.get("value", "Default") for tz in timezones_data] if timezones_data else ["Default"]
+        self.timezone = str(defaults.get("default_timezone", "Default"))
+
+    @classmethod
+    def _load_defaults(cls) -> Dict[str, Any]:
+        """加载默认配置.
+
+        使用类级别缓存避免重复加载.
+
+        Returns:
+            defaults.json 中的配置数据
+        """
+        if not cls._defaults_loaded:
+            try:
+                cls._defaults = cls.load_data_file("defaults.json")
+                cls._defaults_loaded = True
+            except (FileNotFoundError, json.JSONDecodeError):
+                cls._defaults = {}
+                cls._defaults_loaded = True
+        return cls._defaults
 
     @property
     def multi(self) -> float:
@@ -205,6 +251,8 @@ class ConfigBase:
         用于测试或需要强制重新加载数据时.
         """
         cls._data_cache.clear()
+        cls._defaults_loaded = False
+        cls._defaults = {}
 
     @classmethod
     def get_default_threshold(cls) -> float:

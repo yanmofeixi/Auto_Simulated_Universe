@@ -10,12 +10,13 @@ import cv2 as cv
 import keyboard
 import numpy as np
 import pyautogui
-import simul.keyops as keyops
 import win32api, win32con, win32gui
 from align_angle import main as align_angle
 from simul.config import config
-from simul.map_log import map_log
 from simul.utils import notif, set_forground, UniverseUtils
+from utils.common.keyops import key_down as keyDown, key_up as keyUp
+from utils.common.map_log import map_log
+from utils.common.window_manager import wait_for_game_foreground
 from utils.common.run_counter import update_weekly_counter
 from utils.log import log
 
@@ -109,23 +110,14 @@ class SimulatedUniverse(UniverseUtils):
         while True:
             if self._stop:
                 break
-            hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
-            Text = win32gui.GetWindowText(hwnd)
-            warn_game = False
-            cnt = 0
-            while Text != "崩坏：星穹铁道" and Text != "云.星穹铁道" and not self._stop:
-                self.lst_changed = time.time()
-                if self._stop:
-                    raise KeyboardInterrupt
-                if not warn_game:
-                    warn_game = True
-                    log.warning(f"等待游戏窗口,当前窗口:{Text}")
-                time.sleep(0.5)
-                cnt += 1
-                if cnt == 1200:
-                    set_forground()
-                hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
-                Text = win32gui.GetWindowText(hwnd)
+            # 等待游戏窗口成为前台
+            if not wait_for_game_foreground(
+                stop_flag=lambda: self._stop,
+                on_waiting=lambda title: log.warning(f"等待游戏窗口,当前窗口:{title}"),
+                on_lst_changed=lambda: setattr(self, "lst_changed", time.time()),
+                set_foreground_fn=set_forground,
+            ):
+                break
             if self._stop:
                 break
             self.get_screen()
@@ -344,7 +336,7 @@ class SimulatedUniverse(UniverseUtils):
             self.battle = 0
             # 刚进图,初始化一些数据
             if self.big_map_c == 0:
-                keyops.keyUp("w")
+                keyUp("w")
                 # 黑屏检测
                 while 1:
                     men = np.mean(self.get_screen())
@@ -414,7 +406,7 @@ class SimulatedUniverse(UniverseUtils):
                 if self.find == 0:
                     self.press("s", 0.5)
                     if self._stop == 0:
-                        keyops.keyDown("w")
+                        keyDown("w")
                     time.sleep(0.5)
                     self.get_screen()
             self.lst_tm = time.time()

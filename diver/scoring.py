@@ -10,20 +10,41 @@
 
 优先级顺序 (从低到高):
 1. 角色配置 (character_prior.json) - 基础权重
-2. 队伍类型配置 (team_prior.json) - 权重乘以 TEAM_PRIORITY_MULTIPLIER
-3. 全局配置 (global_prior.json) - 权重乘以 GLOBAL_PRIORITY_MULTIPLIER (最高优先级)
+2. 队伍类型配置 (team_prior.json) - 权重乘以 team_priority_multiplier
+3. 全局配置 (global_prior.json) - 权重乘以 global_priority_multiplier (最高优先级)
 """
 
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Dict, Iterable, Mapping, Optional
+from typing import Dict, Iterable, List, Mapping, Optional
 
-# 队伍类型配置的权重乘数
-TEAM_PRIORITY_MULTIPLIER = 5
+from utils.common.config_base import ConfigBase
 
-# 全局配置的权重乘数,确保全局配置具有最高优先级
-GLOBAL_PRIORITY_MULTIPLIER = 10
+
+def _get_scoring_config() -> Dict:
+    """获取打分配置 (带缓存).
+
+    Returns:
+        scoring 配置字典
+    """
+    defaults = ConfigBase.get_default_config()
+    return defaults.get("scoring", {})
+
+
+def get_team_priority_multiplier() -> int:
+    """获取队伍类型配置的权重乘数."""
+    return _get_scoring_config().get("team_priority_multiplier", 5)
+
+
+def get_global_priority_multiplier() -> int:
+    """获取全局配置的权重乘数."""
+    return _get_scoring_config().get("global_priority_multiplier", 10)
+
+
+def get_event_weights() -> List[int]:
+    """获取事件选项权重列表."""
+    return _get_scoring_config().get("event_weights", [2, 1, -10])
 
 
 def score_event_choice(text: str, event_rule: Iterable[str]) -> int:
@@ -31,11 +52,11 @@ def score_event_choice(text: str, event_rule: Iterable[str]) -> int:
 
     规则:
     - event_rule 长度为 3(偏好/普通/强烈不选),每项允许用 '-' 分隔多个关键词.
-    - 固定权重:偏好/普通/强烈不选 -> 2/1/-10.
+    - 固定权重:偏好/普通/强烈不选 -> 从 defaults.json 读取.
     """
 
     score = 0
-    event_weight = [2, 1, -10]
+    event_weight = get_event_weights()
     event_rule_list = list(event_rule)
     for index in range(3):
         for token in event_rule_list[index].split("-"):
@@ -57,8 +78,8 @@ def build_blessing_prior(
 
     优先级顺序 (从低到高):
     1. 角色配置 (基础权重)
-    2. 队伍类型配置 (权重乘以 TEAM_PRIORITY_MULTIPLIER)
-    3. 全局配置 (权重乘以 GLOBAL_PRIORITY_MULTIPLIER)
+    2. 队伍类型配置 (权重乘以 team_priority_multiplier)
+    3. 全局配置 (权重乘以 global_priority_multiplier)
 
     Args:
         team_member_names: 队伍成员名称列表.
@@ -73,6 +94,9 @@ def build_blessing_prior(
     blessing_prior: defaultdict = defaultdict(int)
     blessing_data = character_prior.get("blessing", {})
 
+    team_multiplier = get_team_priority_multiplier()
+    global_multiplier = get_global_priority_multiplier()
+
     # 1. 先处理角色配置 (最低优先级)
     for name in list(team_member_names):
         if name in blessing_data:
@@ -84,12 +108,12 @@ def build_blessing_prior(
     if team_prior and team_type in team_prior:
         team_blessing = team_prior[team_type].get("blessing", {})
         for token, weight in team_blessing.items():
-            blessing_prior[token] += weight * TEAM_PRIORITY_MULTIPLIER
+            blessing_prior[token] += weight * team_multiplier
 
     # 3. 最后处理全局配置 (最高优先级)
     if global_prior and "blessing" in global_prior:
         for token, weight in global_prior["blessing"].items():
-            blessing_prior[token] += weight * GLOBAL_PRIORITY_MULTIPLIER
+            blessing_prior[token] += weight * global_multiplier
 
     return blessing_prior
 
@@ -107,8 +131,8 @@ def build_equation_prior(
 
     优先级顺序 (从低到高):
     1. 角色配置 (基础权重)
-    2. 队伍类型配置 (权重乘以 TEAM_PRIORITY_MULTIPLIER)
-    3. 全局配置 (权重乘以 GLOBAL_PRIORITY_MULTIPLIER)
+    2. 队伍类型配置 (权重乘以 team_priority_multiplier)
+    3. 全局配置 (权重乘以 global_priority_multiplier)
 
     Args:
         team_member_names: 队伍成员名称列表.
@@ -123,6 +147,9 @@ def build_equation_prior(
     equation_prior: defaultdict = defaultdict(int)
     equation_data = character_prior.get("equation", {})
 
+    team_multiplier = get_team_priority_multiplier()
+    global_multiplier = get_global_priority_multiplier()
+
     # 1. 先处理角色配置 (最低优先级)
     for name in list(team_member_names):
         if name in equation_data:
@@ -134,12 +161,12 @@ def build_equation_prior(
     if team_prior and team_type in team_prior:
         team_equation = team_prior[team_type].get("equation", {})
         for token, weight in team_equation.items():
-            equation_prior[token] += weight * TEAM_PRIORITY_MULTIPLIER
+            equation_prior[token] += weight * team_multiplier
 
     # 3. 最后处理全局配置 (最高优先级)
     if global_prior and "equation" in global_prior:
         for token, weight in global_prior["equation"].items():
-            equation_prior[token] += weight * GLOBAL_PRIORITY_MULTIPLIER
+            equation_prior[token] += weight * global_multiplier
 
     return equation_prior
 
@@ -157,8 +184,8 @@ def build_boon_prior(
 
     优先级顺序 (从低到高):
     1. 角色配置 (基础权重)
-    2. 队伍类型配置 (权重乘以 TEAM_PRIORITY_MULTIPLIER)
-    3. 全局配置 (权重乘以 GLOBAL_PRIORITY_MULTIPLIER)
+    2. 队伍类型配置 (权重乘以 team_priority_multiplier)
+    3. 全局配置 (权重乘以 global_priority_multiplier)
 
     Args:
         team_member_names: 队伍成员名称列表.
@@ -173,6 +200,9 @@ def build_boon_prior(
     boon_prior: defaultdict = defaultdict(int)
     boon_data = character_prior.get("boon", {})
 
+    team_multiplier = get_team_priority_multiplier()
+    global_multiplier = get_global_priority_multiplier()
+
     # 1. 先处理角色配置 (最低优先级)
     for name in list(team_member_names):
         if name in boon_data:
@@ -184,12 +214,12 @@ def build_boon_prior(
     if team_prior and team_type in team_prior:
         team_boon = team_prior[team_type].get("boon", {})
         for token, weight in team_boon.items():
-            boon_prior[token] += weight * TEAM_PRIORITY_MULTIPLIER
+            boon_prior[token] += weight * team_multiplier
 
     # 3. 最后处理全局配置 (最高优先级)
     if global_prior and "boon" in global_prior:
         for token, weight in global_prior["boon"].items():
-            boon_prior[token] += weight * GLOBAL_PRIORITY_MULTIPLIER
+            boon_prior[token] += weight * global_multiplier
 
     return boon_prior
 
@@ -207,8 +237,8 @@ def build_curio_prior(
 
     优先级顺序 (从低到高):
     1. 角色配置 (基础权重)
-    2. 队伍类型配置 (权重乘以 TEAM_PRIORITY_MULTIPLIER)
-    3. 全局配置 (权重乘以 GLOBAL_PRIORITY_MULTIPLIER)
+    2. 队伍类型配置 (权重乘以 team_priority_multiplier)
+    3. 全局配置 (权重乘以 global_priority_multiplier)
 
     Args:
         team_member_names: 队伍成员名称列表.
@@ -223,6 +253,9 @@ def build_curio_prior(
     curio_prior: defaultdict = defaultdict(int)
     curio_data = character_prior.get("curio", {})
 
+    team_multiplier = get_team_priority_multiplier()
+    global_multiplier = get_global_priority_multiplier()
+
     # 1. 先处理角色配置 (最低优先级)
     for name in list(team_member_names):
         if name in curio_data:
@@ -234,12 +267,12 @@ def build_curio_prior(
     if team_prior and team_type in team_prior:
         team_curio = team_prior[team_type].get("curio", {})
         for token, weight in team_curio.items():
-            curio_prior[token] += weight * TEAM_PRIORITY_MULTIPLIER
+            curio_prior[token] += weight * team_multiplier
 
     # 3. 最后处理全局配置 (最高优先级)
     if global_prior and "curio" in global_prior:
         for token, weight in global_prior["curio"].items():
-            curio_prior[token] += weight * GLOBAL_PRIORITY_MULTIPLIER
+            curio_prior[token] += weight * global_multiplier
 
     return curio_prior
 
@@ -257,8 +290,8 @@ def build_weighted_curio_prior(
 
     优先级顺序 (从低到高):
     1. 角色配置 (基础权重)
-    2. 队伍类型配置 (权重乘以 TEAM_PRIORITY_MULTIPLIER)
-    3. 全局配置 (权重乘以 GLOBAL_PRIORITY_MULTIPLIER)
+    2. 队伍类型配置 (权重乘以 team_priority_multiplier)
+    3. 全局配置 (权重乘以 global_priority_multiplier)
 
     Args:
         team_member_names: 队伍成员名称列表.
@@ -273,6 +306,9 @@ def build_weighted_curio_prior(
     weighted_curio_prior: defaultdict = defaultdict(int)
     weighted_curio_data = character_prior.get("weighted_curio", {})
 
+    team_multiplier = get_team_priority_multiplier()
+    global_multiplier = get_global_priority_multiplier()
+
     # 1. 先处理角色配置 (最低优先级)
     for name in list(team_member_names):
         if name in weighted_curio_data:
@@ -284,12 +320,12 @@ def build_weighted_curio_prior(
     if team_prior and team_type in team_prior:
         team_weighted_curio = team_prior[team_type].get("weighted_curio", {})
         for token, weight in team_weighted_curio.items():
-            weighted_curio_prior[token] += weight * TEAM_PRIORITY_MULTIPLIER
+            weighted_curio_prior[token] += weight * team_multiplier
 
     # 3. 最后处理全局配置 (最高优先级)
     if global_prior and "weighted_curio" in global_prior:
         for token, weight in global_prior["weighted_curio"].items():
-            weighted_curio_prior[token] += weight * GLOBAL_PRIORITY_MULTIPLIER
+            weighted_curio_prior[token] += weight * global_multiplier
 
     return weighted_curio_prior
 
@@ -413,8 +449,8 @@ def build_other_prior(
 
     优先级顺序 (从低到高):
     1. 角色配置 (基础权重)
-    2. 队伍类型配置 (权重乘以 TEAM_PRIORITY_MULTIPLIER)
-    3. 全局配置 (权重乘以 GLOBAL_PRIORITY_MULTIPLIER)
+    2. 队伍类型配置 (权重乘以 team_priority_multiplier)
+    3. 全局配置 (权重乘以 global_priority_multiplier)
 
     Args:
         team_member_names: 队伍成员名称列表.
@@ -429,6 +465,9 @@ def build_other_prior(
     other_prior: defaultdict = defaultdict(int)
     other_data = character_prior.get("b", {})
 
+    team_multiplier = get_team_priority_multiplier()
+    global_multiplier = get_global_priority_multiplier()
+
     # 1. 先处理角色配置 (最低优先级)
     for name in list(team_member_names):
         if name in other_data:
@@ -440,12 +479,12 @@ def build_other_prior(
     if team_prior and team_type in team_prior:
         team_other = team_prior[team_type].get("other", {})
         for token, weight in team_other.items():
-            other_prior[token] += weight * TEAM_PRIORITY_MULTIPLIER
+            other_prior[token] += weight * team_multiplier
 
     # 3. 最后处理全局配置 (最高优先级)
     if global_prior and "other" in global_prior:
         for token, weight in global_prior["other"].items():
-            other_prior[token] += weight * GLOBAL_PRIORITY_MULTIPLIER
+            other_prior[token] += weight * global_multiplier
 
     return other_prior
 

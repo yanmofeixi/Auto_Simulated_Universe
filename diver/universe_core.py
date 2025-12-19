@@ -74,13 +74,14 @@ from diver.scoring import (
     score_other,
     score_weighted_curio,
 )
-from diver.text_utils import (
+from diver.utils import notif, set_forground, UniverseUtils
+from utils.common import team_utils
+from utils.common.text_utils import (
     clean_text as clean_text_fn,
     get_text_type as get_text_type_fn,
     merge_text as merge_text_fn,
 )
-from diver.utils import notif, set_forground, UniverseUtils
-from utils.common import team_utils
+from utils.common.window_manager import wait_for_game_foreground
 from utils.common.json_utils import (
     read_actions_json,
     read_global_prior,
@@ -219,23 +220,14 @@ class DivergentUniverse(UniverseUtils):
         while True:
             if self._stop:
                 break
-            hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
-            Text = win32gui.GetWindowText(hwnd)
-            warn_game = False
-            cnt = 0
-            while Text != "崩坏：星穹铁道" and Text != "云.星穹铁道" and not self._stop:
-                self.lst_changed = time.time()
-                if self._stop:
-                    raise KeyboardInterrupt
-                if not warn_game:
-                    warn_game = True
-                    log.warning(f"等待游戏窗口,当前窗口:{Text}")
-                time.sleep(0.5)
-                cnt += 1
-                if cnt == 1200:
-                    set_forground()
-                hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
-                Text = win32gui.GetWindowText(hwnd)
+            # 等待游戏窗口成为前台
+            if not wait_for_game_foreground(
+                stop_flag=lambda: self._stop,
+                on_waiting=lambda title: log.warning(f"等待游戏窗口,当前窗口:{title}"),
+                on_lst_changed=lambda: setattr(self, "lst_changed", time.time()),
+                set_foreground_fn=set_forground,
+            ):
+                break
             if self._stop:
                 break
             self.loop()

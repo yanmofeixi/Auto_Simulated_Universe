@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import Optional
 
 from utils.common.notif_file import write_notif_file
-from utils.common.window import set_game_foreground
+from utils.common.window_manager import set_game_foreground
 
 
 def notif(*, title: str, msg: str, cnt: Optional[str] = None, log=None) -> int:

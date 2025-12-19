@@ -82,8 +82,8 @@ class Config(ConfigBase):
 
     @property
     def default_threshold(self) -> float:
-        """默认匹配阈值."""
-        return self.DEFAULT_THRESHOLD
+        """默认匹配阈值 (从 defaults.json 读取)."""
+        return self.get_default_threshold()
 
     @property
     def default_long_range_slot(self) -> str:

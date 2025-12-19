@@ -1,96 +1,69 @@
-import ctypes
+"""模拟宇宙工具模块.
+
+该模块继承 UniverseUtilsBase 基类,提供模拟宇宙特有的功能.
+"""
+
 import math
-import os
 import random
 import sys
 import threading
 import time
-import traceback
 from copy import deepcopy
-from math import cos, sin
 
 import cv2 as cv
 import numpy as np
 import pyautogui
-import pythoncom, win32com.client, win32gui
-import simul.keyops as keyops
-import simul.ocr as ocr
-
 import win32api
 import win32con
-import win32gui
-import win32print
-from simul.config import config
 
-from simul.map_log import map_log
+import simul.ocr as ocr
+from simul.config import config
 from utils.common.app_ops import (
     notif as _common_notif,
     set_forground as _common_set_forground,
 )
-from utils.common.minimap_ops import (
-    exist_minimap as common_exist_minimap,
-    get_now_direc as common_get_now_direc,
-    take_fine_minimap as common_take_fine_minimap,
-)
-
-from utils.common.notif_file import write_notif_file
-from utils.common.screen_ops import get_local as common_get_local
-from utils.common.template_match import match_template_near_point
-from utils.common.ui_ops import (
-    calc_point as common_calc_point,
-    click as common_click,
-    click_box as common_click_box,
-    click_position as common_click_position,
-    debug_print_point as common_debug_print_point,
-    drag as common_drag,
-    gen_hotkey_img as common_gen_hotkey_img,
-    press_key as common_press_key,
-    sprint as common_sprint,
-    wait_fig as common_wait_fig,
-)
-from utils.common.vision import (
-    calculated as common_calculated,
-    click_target as common_click_target,
-    scan_screenshot as common_scan_screenshot,
-)
-from utils.common.window import set_game_foreground
-from utils.common.window_context import wait_for_game_window_context
+from utils.common.keyops import key_down as keyDown, key_up as keyUp
+from utils.common.map_log import map_log
+from utils.common.universe_utils_base import UniverseUtilsBase
 from utils.log import log
-from utils.screenshot import Screen
 
 
 def notif(title, msg, cnt=None):
     """写入通知文件并返回当前计数."""
-
     return _common_notif(title=title, msg=msg, cnt=cnt, log=log)
 
 
-# 将游戏窗口设为前台
 def set_forground():
+    """将游戏窗口设为前台."""
     _common_set_forground(config=config, is_frozen=getattr(sys, "frozen", False))
 
 
-class UniverseUtils:
+class UniverseUtils(UniverseUtilsBase):
+    """模拟宇宙工具类.
+
+    继承 UniverseUtilsBase,提供模拟宇宙特有的功能.
+    """
+
+    # 设置基类需要的模块引用
+    config = config
+    keyops = keyops
+    ocr = ocr
+    log = log
+
     def __init__(self):
+        # 先设置前台
         set_forground()
-        self.check_bonus = 1
-        self._stop = False
-        self.stop_move = 0
-        self.move = 0
-        self.multi = config.multi
-        self.diffi = config.diffi
+
+        # 调用基类初始化
+        super().__init__()
+
+        # simul 特有的属性
         self.fate = config.fate
         self.my_fate = -1
-        self.fail_count = 0
-        self.first_mini = 1
-        self.ts = ocr.My_TS()
-        self.last_info = ""
-        self.mini_target = 0
-        self.f_time = 0
-        self.init_ang = 0
-        self.allow_e = 1
-        self.quan = 0
-        self.img_map = dict()
+        self.debug = 0
+        self.tss = "ey.jpg"
+        self.order = config.order
+
         # 用户选择的命途
         for i in range(len(config.fates)):
             if config.fates[i] == self.fate:
@@ -98,51 +71,108 @@ class UniverseUtils:
         if self.my_fate == -1:
             log.info("info有误,自动选择巡猎命途    错误:" + self.fate)
             self.my_fate = 4
+
+        # OCR 相关
+        self.ts = ocr.My_TS()
         self.tk = ocr.text_keys(self.my_fate)
-        self.debug, self.find = 0, 1
-        self.bx, self.by = 1920, 1080
-        log.warning("等待游戏窗口")
-        self.tss = "ey.jpg"
-        ctx = wait_for_game_window_context(log=log)
-        self.x0, self.y0, self.x1, self.y1 = ctx.x0, ctx.y0, ctx.x1, ctx.y1
-        self.xx, self.yy = ctx.width, ctx.height
-        self.full = ctx.is_fullscreen
-        self.scx, self.scy = ctx.scx, ctx.scy
-        self.scale = ctx.dpi_scale
-        self.real_width = ctx.real_width
+
+        # 日志输出
         log.info("DPI: " + str(self.scale) + " A:" + str(int(self.multi * 100) / 100))
-        log.info("TEXT: " + str(ctx.title))
-        if self.xx != 1920 or self.yy != 1080:
-            log.error("分辨率错误")
         time.sleep(1)
-        self.order = config.order
-        self.sct = Screen()
 
-    def gen_hotkey_img(self, hotkey="e", bg="imgs/f_bg.jpg"):
-        # 通用实现:diver/simul 完全一致,抽到共享模块减少重复维护
-        return common_gen_hotkey_img(hotkey=hotkey, bg=bg)
+    # ===== simul 特有的方法或需要覆盖的方法 =====
 
-    def press(self, c, t=0):
-        # 通用实现
-        return common_press_key(
-            key=c,
-            duration=t,
-            log=log,
-            keyops=keyops,
-            allow_e=bool(self.allow_e),
+    def format_path(self, path):
+        """simul 使用 ./imgs/ 前缀."""
+        return f"./imgs/{path}.jpg"
+
+    def click_text(self, text, env=None, click=1):
+        """点击匹配的文本.
+
+        simul 特有实现: 使用 find_text 方法.
+        """
+        img = self.get_screen()
+        pt = self.ts.find_text(img, text, env=env)
+        if pt is not None:
+            if click:
+                self.click(
+                    (
+                        1 - (pt[0][0] + pt[1][0]) / 2 / self.xx,
+                        1 - (pt[0][1] + pt[2][1]) / 2 / self.yy,
+                    )
+                )
+            return 1
+        return 0
+
+    def click_target(self, target_path, threshold, flag=True):
+        """点击与模板匹配的点.
+
+        simul 特有实现: exit_on_found=True.
+        """
+        from utils.common.vision import click_target as common_click_target
+
+        def _on_found(points, _result, _template):
+            self.get_point(*points)
+
+        common_click_target(
+            target_path=target_path,
+            threshold=threshold,
+            must_match=bool(flag),
+            print_func=print,
+            on_found=_on_found,
+            exit_on_found=True,
+        )
+
+    def click(self, points, click=1):
+        """点击一个点.
+
+        simul 覆盖: 使用 self.debug 控制调试级别.
+        """
+        from utils.common.ui_ops import click as common_click
+
+        return common_click(
+            points=points,
+            click_enabled=bool(click),
+            debug_level=int(self.debug),
+            print_func=print,
+            print_stack=self.print_stack,
+            x1=self.x1,
+            y1=self.y1,
+            window_width=self.xx,
+            window_height=self.yy,
+            is_fullscreen=bool(self.full),
             stop_flag=lambda: self._stop,
         )
 
-    def sprint(self):
-        return common_sprint(
-            log=log,
-            keyops=keyops,
-            press=lambda key, duration=0: self.press(key, duration),
-        )
+    def print_stack(self, num=1):
+        """打印调用栈信息.
 
-    # example: self.wait_fig(lambda:self.check("curio", 0.9417, 0.9481), 1.4)
-    def wait_fig(self, f, timeout=3):
-        return common_wait_fig(predicate=f, timeout=timeout, get_screen=self.get_screen)
+        simul 特有实现: 基于 self.debug 判断.
+        """
+        import traceback
+
+        if self.debug:
+            stk = traceback.extract_stack()
+            for i in range(num):
+                try:
+                    print(
+                        stk[-2].name,
+                        stk[-3 - i].filename.split("\\")[-1].split(".")[0],
+                        stk[-3 - i].name,
+                        stk[-3 - i].lineno,
+                    )
+                except:
+                    pass
+
+    def get_screen(self):
+        """获取游戏窗口截屏.
+
+        simul 特有实现: 不检查游戏窗口.
+        """
+        self.screen = self.sct.grab(self.x0, self.y0)
+        return self.screen
+
+    # ===== simul 特有的业务方法 =====
 
     def use_it(self, x, y):
         if x != 1 or y != 1:
@@ -197,152 +227,7 @@ class UniverseUtils:
                 if self.wait_fig(lambda: not self.isrun(), 3):
                     return
 
-    def get_point(self, x, y):
-        # 通用实现:diver/simul 完全一致
-        return common_debug_print_point(
-            x=x,
-            y=y,
-            x1=self.x1,
-            y1=self.y1,
-            window_width=self.xx,
-            window_height=self.yy,
-            print_func=print,
-        )
-
-    def calc_point(self, point, offset):
-        return common_calc_point(
-            point=point,
-            offset=offset,
-            window_width=self.xx,
-            window_height=self.yy,
-        )
-
-    def click_text(self, text, env=None, click=1):
-        img = self.get_screen()
-        pt = self.ts.find_text(img, text, env=env)
-        if pt is not None:
-            if click:
-                self.click(
-                    (
-                        1 - (pt[0][0] + pt[1][0]) / 2 / self.xx,
-                        1 - (pt[0][1] + pt[2][1]) / 2 / self.yy,
-                    )
-                )
-            return 1
-        return 0
-
-    # 由click_target调用,返回图片匹配结果
-    def scan_screenshot(self, prepared):
-        return common_scan_screenshot(prepared)
-
-    # 计算匹配中心点坐标
-    def calculated(self, result, shape):
-        return common_calculated(result, shape)
-
-    # 点击一个点
-    def click(self, points, click=1):
-        return common_click(
-            points=points,
-            click_enabled=bool(click),
-            debug_level=int(self.debug),
-            print_func=print,
-            print_stack=self.print_stack,
-            x1=self.x1,
-            y1=self.y1,
-            window_width=self.xx,
-            window_height=self.yy,
-            is_fullscreen=bool(self.full),
-            stop_flag=lambda: self._stop,
-        )
-
-    # 拖动
-    def drag(self, pt1, pt2):
-        # 通用实现:坐标换算 + 全屏偏移 + pyautogui.drag
-        return common_drag(
-            start=pt1,
-            end=pt2,
-            x1=self.x1,
-            y1=self.y1,
-            window_width=self.xx,
-            window_height=self.yy,
-            is_fullscreen=bool(self.full),
-        )
-
-    # 点击与模板匹配的点,flag=True表示必须匹配,不匹配就会一直寻找直到出现匹配
-    def click_target(self, target_path, threshold, flag=True):
-        def _on_found(points, _result, _template):
-            # 保持历史行为:打印坐标后直接 exit()
-            self.get_point(*points)
-
-        common_click_target(
-            target_path=target_path,
-            threshold=threshold,
-            must_match=bool(flag),
-            print_func=print,
-            on_found=_on_found,
-            exit_on_found=True,
-        )
-        return
-
-    # 在截图中裁剪需要匹配的部分
-    def get_local(self, x, y, size, large=True):
-        return common_get_local(
-            screen=self.screen,
-            window_width=self.xx,
-            window_height=self.yy,
-            x_ratio=x,
-            y_ratio=y,
-            size=(size[0], size[1]),
-            large=bool(large),
-        )
-
-    def format_path(self, path):
-        return f"./imgs/{path}.jpg"
-
-    # 判断截图中匹配中心点附近是否存在匹配模板
-    # path:匹配模板的路径,x,y:匹配中心点,mask:如果存在,则以mask大小为基准裁剪截图,threshold:匹配阈值
-    def check(self, path, x, y, mask=None, threshold=None, large=True):
-        if threshold is None:
-            threshold = self.threshold
-        formatted_target_path = self.format_path(path)
-        target = cv.imread(formatted_target_path)
-        if formatted_target_path == "./imgs/f.jpg":
-            # 使用默认的 f 键图片
-            pass
-            threshold -= 0.01
-
-        match = match_template_near_point(
-            cv=cv,
-            screen=self.screen,
-            read_image=cv.imread,
-            format_path=self.format_path,
-            get_local=lambda x_ratio, y_ratio, size, large_flag: self.get_local(
-                x_ratio, y_ratio, size, large_flag
-            ),
-            path=path,
-            x_ratio=x,
-            y_ratio=y,
-            scx=float(self.scx),
-            threshold=float(threshold),
-            mask=mask,
-            large=bool(large),
-            target_image=target,
-        )
-
-        if large == False:
-            return match.local_screen
-
-        self.tx = match.tx
-        self.ty = match.ty
-        self.tm = match.max_val
-        if match.max_val > threshold:
-            if self.last_info != formatted_target_path:
-                log.info(
-                    "匹配到图片 %s 相似度 %f 阈值 %f"
-                    % (formatted_target_path, match.max_val, threshold)
-                )
-            self.last_info = formatted_target_path
-        return match.matched
+    # 以下方法已移到基类，删除重复定义后保留 simul 特有的业务方法
 
     def get_end_point(self, mask=0):
         self.get_screen()
@@ -434,89 +319,16 @@ class UniverseUtils:
         img = cv.warpAffine(src, M, (w, h))
         return img
 
-    # 初步裁剪小地图,并增强小地图中的蓝色箭头
-    def exist_minimap(self):
-        self.loc_scr = common_exist_minimap(
-            get_screen=self.get_screen,
-            get_local=lambda x, y, size, large=True: self.get_local(x, y, size, large),
-            scx=float(self.scx),
-        )
-
-    # 从全屏截屏中裁剪得到游戏窗口截屏
-    def get_screen(self):
-        self.screen = self.sct.grab(self.x0, self.y0)
-        return self.screen
-
-    # 移动视角,获得小地图中不变的部分(白线,灰块)
-    def take_fine_minimap(self, n=5, dt=0.01, dy=200):
-        return common_take_fine_minimap(
-            get_screen=self.get_screen,
-            exist_minimap_fn=lambda: (self.exist_minimap() or self.loc_scr),
-            n=n,
-            dt=dt,
-            dy=dy,
-        )
-
-    # 进一步得到小地图的黑白格式
-    # gs:是否重新截图
+    # simul 特有: get_bw_map 需要在 find==0 时写文件
     def get_bw_map(self, gs=1, local_screen=None):
-        yellow = np.array([145, 192, 220])
-        black = np.array([0, 0, 0])
-        white = np.array([210, 210, 210])
-        gray = np.array([55, 55, 55])
-        shape = (int(self.scx * 190), int(self.scx * 190))
-        if gs:
-            self.get_screen()
-            if self.check("choose_blessing", 0.9266, 0.9491):
-                return None
-        if local_screen is None:
-            local_screen = self.get_local(0.9333, 0.8657, shape)
-        bw_map = np.zeros(local_screen.shape[:2], dtype=np.uint8)
-        # 灰块,白线:小地图中的可移动区域,可移动区域的边缘
-        # b_map:当前像素点是否是灰块.只允许灰块附近(2像素)的像素被识别为白线
-        b_map = deepcopy(bw_map)
-        b_map[
-            np.sum((local_screen - gray) ** 2, axis=-1) <= 3200 + self.find * 1600
-        ] = 255
-        blk_map = deepcopy(bw_map)
-        blk_map[
-            np.sum((local_screen - black) ** 2, axis=-1) <= 800 + self.find * 800
-        ] = 255
-        kernel = np.zeros((9, 9), np.uint8)  # 设置kenenel大小
-        kernel += 1
-        dilate = cv.dilate(blk_map, kernel, iterations=1)  # 膨胀还原图形
-        kernel = np.zeros((5, 5), np.uint8)  # 设置kenenel大小
-        kernel += 1
-        b_map = cv.dilate(b_map, kernel, iterations=1)
-        bw_map[
-            (np.sum((local_screen - white) ** 2, axis=-1) <= 3200 + self.find * 1600)
-            & (b_map > 200)
-        ] = 255
-        # 再次精确裁剪,这里区别模式只是防止bug,find=1时的裁剪是最精确的(中心点即为人物坐标)
-        if self.find == 0:
-            bw_map = bw_map[
-                int(shape[0] * 0.5) - 68 : int(shape[0] * 0.5) + 108,
-                int(shape[1] * 0.5) - 48 : int(shape[1] * 0.5) + 128,
-            ]
-        else:
-            bw_map = bw_map[
-                int(shape[0] * 0.5) - 68 - 2 : int(shape[0] * 0.5) + 108 - 2,
-                int(shape[1] * 0.5) - 48 - 8 : int(shape[1] * 0.5) + 128 - 8,
-            ]
-        # 排除半径85以外的像素点
-        for i in range(bw_map.shape[0]):
-            for j in range(bw_map.shape[1]):
-                if ((i - 88) ** 2 + (j - 88) ** 2) > 85**2:
-                    bw_map[i, j] = 0
-        if self.find == 0:
+        """获取小地图的黑白格式.
+
+        simul 覆盖: find==0 时写入 bwmap.jpg
+        """
+        bw_map = super().get_bw_map(gs=gs, local_screen=local_screen)
+        if bw_map is not None and self.find == 0:
             cv.imwrite(self.map_file + "bwmap.jpg", bw_map)
         return bw_map
-
-    # 计算小地图中蓝色箭头的角度
-    def get_now_direc(self, loc_scr):
-        return common_get_now_direc(
-            cv=cv, loc_scr=loc_scr, arrow_template_path=self.format_path("loc_arrow")
-        )
 
     def get_level(self):
         tm = time.time()
@@ -741,7 +553,7 @@ class UniverseUtils:
             self.ang = ang
             ps = [13, 9 + self.quan * 7, 11, 7]
             if self._stop == 0:
-                keyops.keyDown("w")
+                keyDown("w")
             time.sleep(0.25)
             sft = 0
             if sft == 0 and type != 3:
@@ -761,7 +573,7 @@ class UniverseUtils:
             c = 0
             for i in range(3000):
                 if self._stop == 1:
-                    keyops.keyUp("w")
+                    keyUp("w")
                     return
                 ctm = time.time()
                 bw_map = self.get_bw_map()
@@ -798,7 +610,7 @@ class UniverseUtils:
                 if dls[0] <= nds:
                     ts = " da"
                     if t > 0:
-                        keyops.keyUp("w")
+                        keyUp("w")
                         self.press("s", 0.35)
                         self.press(ts[t], 0.2 * random.randint(1, 3))
                         self.press("w", 0.3)
@@ -817,7 +629,7 @@ class UniverseUtils:
                         c = 0
                         sft = 1
                     else:
-                        keyops.keyUp("w")
+                        keyUp("w")
                         break
                 if nds <= ps[type]:
                     if type == 0:
@@ -833,7 +645,7 @@ class UniverseUtils:
                         ds = self.get_dis(self.real_loc, loc)
                         t = 2
                     else:
-                        keyops.keyUp("w")
+                        keyUp("w")
                         break
                 else:
                     self.get_screen()
@@ -841,12 +653,12 @@ class UniverseUtils:
                         "f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96
                     ):
                         self.press("f")
-                        keyops.keyUp("w")
+                        keyUp("w")
                         if self.nof(must_be="tp"):
                             log.info("大图识别到传送点!")
                             return
                     elif (type != 3 and self.goodf()) or not self.isrun():
-                        keyops.keyUp("w")
+                        keyUp("w")
                         break
                 ds = nds
                 dls.append(ds)
@@ -878,7 +690,7 @@ class UniverseUtils:
                         self.press("w", 1.6)
                         pyautogui.click()
                 else:
-                    keyops.keyUp("w")
+                    keyUp("w")
                     for ii in range(2):
                         self.use_e()
                         if ii:
@@ -925,7 +737,7 @@ class UniverseUtils:
             time.sleep(0.08)
             i ^= 1
         if not self._stop:
-            keyops.keyDown("w")
+            keyDown("w")
 
     # 视角转动x度
     def mouse_move(self, x, fine=1):
@@ -1205,15 +1017,15 @@ class UniverseUtils:
             return
         if self.mini_state == 3 and self.floor in [3, 7, 12] and self.check_bonus:
             self.press("d", 0.6)
-            keyops.keyDown("w")
+            keyDown("w")
             nt = time.time()
             while time.time() - nt < 1.3:
                 self.get_screen()
                 if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
                     self.press("f")
-                    keyops.keyUp("w")
+                    keyUp("w")
                     break
-            keyops.keyUp("w")
+            keyUp("w")
             self.press("f")
             time.sleep(1)
             for _ in range(2):
@@ -1228,7 +1040,7 @@ class UniverseUtils:
                         self.check_bonus = 0
                     self.click((0.5062, 0.1454))
                     time.sleep(1.4)
-            keyops.keyUp("w")
+            keyUp("w")
             self.get_screen()
             if self.check("bonus_c", 0.2385, 0.6685):
                 self.click((0.2385, 0.6685))
@@ -1250,7 +1062,7 @@ class UniverseUtils:
             if self.check("z", 0.5906, 0.9537, mask="mask_z", threshold=0.95):
                 if self.floor == 11:
                     self.floor = 12
-        keyops.keyDown("w")
+        keyDown("w")
         wt = 3
         self.first_mini = 0
         sft = 0
@@ -1266,7 +1078,7 @@ class UniverseUtils:
         while True:
             self.get_screen()
             if self._stop == 1:
-                keyops.keyUp("w")
+                keyUp("w")
                 self.stop_move = 1
                 break
             if self.mini_target == 1:
@@ -1276,7 +1088,7 @@ class UniverseUtils:
                     self.stop_move = 1
                     need_confirm = 1
                     if self.nof(must_be="event"):
-                        keyops.keyUp("w")
+                        keyUp("w")
                         return
                     break
             else:
@@ -1288,11 +1100,11 @@ class UniverseUtils:
                     self.stop_move = 1
                     need_confirm = 1
                     if self.nof():
-                        keyops.keyUp("w")
+                        keyUp("w")
                         return
                     break
                 if self.check("auto_2", 0.0583, 0.0769):
-                    keyops.keyUp("w")
+                    keyUp("w")
                     self.stop_move = 1
                     self.mini_state += 2
                     break
@@ -1307,7 +1119,7 @@ class UniverseUtils:
                         and self.floor in [3, 7, 12]
                         and not self.quan
                     ):
-                        keyops.keyUp("w")
+                        keyUp("w")
                         if not self.check(
                             "ruan", 0.0625, 0.7065, threshold=0.95
                         ) and not self.check("U", 0.0240, 0.7759):
@@ -1322,7 +1134,7 @@ class UniverseUtils:
                                     break
                                 if self._stop:
                                     break
-                            keyops.keyDown("w")
+                            keyDown("w")
                     iters = 0
                     while (
                         self.check("z", 0.5906, 0.9537, mask="mask_z", threshold=0.95)
@@ -1332,7 +1144,7 @@ class UniverseUtils:
                         if iters > 4:
                             break
                         if self.quan:
-                            keyops.keyUp("w")
+                            keyUp("w")
                             self.use_e()
                             if self.floor not in [3, 7, 12]:
                                 for _ in range(3):
@@ -1345,7 +1157,7 @@ class UniverseUtils:
                                 return
                             else:
                                 time.sleep(0.8)
-                                keyops.keyDown("w")
+                                keyDown("w")
                         else:
                             pyautogui.click()
                         if iters + self.quan == 2:
@@ -1359,7 +1171,7 @@ class UniverseUtils:
                     break
             if time.time() - init_time > wt:
                 self.stop_move = 1
-                keyops.keyUp("w")
+                keyUp("w")
                 self.mini_state += 2
                 if self.mini_state >= 7:
                     self.lst_changed = 0
@@ -1371,7 +1183,7 @@ class UniverseUtils:
                 break
             time.sleep(0.1)
         self.stop_move = 1
-        keyops.keyUp("w")
+        keyUp("w")
         if need_confirm or (first and self.mini_target != 2):
             for i in "sasddwwaa":
                 if self._stop:

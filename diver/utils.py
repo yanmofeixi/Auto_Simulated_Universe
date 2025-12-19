@@ -1,80 +1,36 @@
-"""模拟宇宙工具模块.
+"""差分宇宙工具模块.
 
-该模块提供模拟宇宙自动化所需的基础工具类,包括屏幕管理,
-输入控制,小地图导航,模板匹配等功能.
-
-Classes:
-    UniverseUtils: 模拟宇宙工具基类
-
-Functions:
-    notif: 发送通知
-    set_forground: 将游戏窗口设为前台
+该模块继承 UniverseUtilsBase 基类,提供差分宇宙特有的功能.
 """
 
 from __future__ import annotations
 
-# ===== 标准库 =====
-import ctypes
 import math
-import os
 import random
 import sys
 import threading
 import time
-import traceback
 from copy import deepcopy
-from math import cos, sin
 from typing import TYPE_CHECKING
 
-# ===== 第三方库 =====
 import cv2 as cv
-import diver.keyops as keyops
-import diver.ocr as ocr
 import numpy as np
 import pyautogui
-import pythoncom
-import utils.common.map_log as map_log_module
 import win32api
-import win32com.client
 import win32con
 import win32gui
-import win32print
-from diver.config import config
 
-# ===== 本项目模块 =====
+import diver.keyops as keyops
+import diver.ocr as ocr
+import utils.common.map_log as map_log_module
+from diver.config import config
 from utils.common.app_ops import (
     notif as _common_notif,
     set_forground as _common_set_forground,
 )
-from utils.common.minimap_ops import (
-    exist_minimap as common_exist_minimap,
-    get_now_direc as common_get_now_direc,
-    take_fine_minimap as common_take_fine_minimap,
-)
-from utils.common.notif_file import write_notif_file
-from utils.common.screen_ops import get_local as common_get_local
-from utils.common.template_match import match_template_near_point
-from utils.common.ui_ops import (
-    calc_point as common_calc_point,
-    click as common_click,
-    click_box as common_click_box,
-    click_position as common_click_position,
-    debug_print_point as common_debug_print_point,
-    drag as common_drag,
-    gen_hotkey_img as common_gen_hotkey_img,
-    press_key as common_press_key,
-    sprint as common_sprint,
-    wait_fig as common_wait_fig,
-)
-from utils.common.vision import (
-    calculated as common_calculated,
-    click_target as common_click_target,
-    scan_screenshot as common_scan_screenshot,
-)
-from utils.common.window import set_game_foreground
-from utils.common.window_context import wait_for_game_window_context
-from utils.log import log, my_print as print, print_exc
-from utils.screenshot import Screen
+from utils.common.config_base import is_game_window
+from utils.common.universe_utils_base import UniverseUtilsBase
+from utils.log import log, my_print as print
 
 # 类型检查时的导入
 if TYPE_CHECKING:
@@ -83,123 +39,111 @@ if TYPE_CHECKING:
 
 def notif(title, msg, cnt=None):
     """写入通知文件并返回当前计数."""
-
     return _common_notif(title=title, msg=msg, cnt=cnt, log=log)
 
 
-# 将游戏窗口设为前台
 def set_forground():
+    """将游戏窗口设为前台."""
     _common_set_forground(config=config, is_frozen=getattr(sys, "frozen", False))
 
 
-class UniverseUtils:
-    """模拟宇宙工具基类.
+class UniverseUtils(UniverseUtilsBase):
+    """差分宇宙工具类.
 
-    该类提供模拟宇宙自动化所需的基础功能,包括:
-    - 屏幕截图和图像处理
-    - 键鼠输入控制
-    - 小地图导航和寻路
-    - 模板匹配和 OCR 识别
-    - 游戏窗口管理
-
-    Attributes:
-        check_bonus (int): 是否检查奖励
-        _stop (bool): 全局停止标志
-        stop_move (int): 停止移动标志
-        move (int): 移动状态标志
-        multi (float): 鼠标灵敏度倍率
-        diffi (int): 难度等级
-        my_fate (int): 当前命途 ID(-1 表示未选择)
-        fail_count (int): 连续失败计数
-        first_mini (int): 是否首次进入小地图导航
-        ts: OCR 识别器实例
-        last_info (str): 上次匹配的图片路径
-        mini_target (int): 小地图目标类型
-        f_time (float): F 键交互时间
-        init_ang (int): 初始视角角度
-        allow_e (int): 是否允许使用 E 技能
-        quan (int): 黄泉模式标志
-        img_map (dict): 地图图像缓存
-        tk: 文本关键词配置
-        find (int): 寻路模式(0=录图,1=寻路)
-        lst_mask: 上次事件掩码
-        event_mask: 事件区域掩码
-        bx, by (int): 基准分辨率
-        x0, y0, x1, y1 (int): 游戏窗口坐标
-        xx, yy (int): 窗口宽高
-        full (bool): 是否全屏模式
-        scx, scy (float): 缩放系数
-        scale (float): DPI 缩放比例
-        real_width (int): 实际宽度
-        sct: 截图工具实例
-        screen: 当前屏幕截图
-        threshold (float): 默认匹配阈值
+    继承 UniverseUtilsBase,提供差分宇宙特有的功能.
     """
 
+    # 设置基类需要的模块引用
+    config = config
+    keyops = keyops
+    ocr = ocr
+    log = log
+
     def __init__(self):
+        # 先设置前台
         set_forground()
-        self.check_bonus = 1
-        self._stop = False
-        self.stop_move = 0
-        self.move = 0
-        self.multi = config.multi
-        self.diffi = config.diffi
+
+        # 调用基类初始化
+        super().__init__()
+
+        # diver 特有的属性
         self.my_fate = -1
-        self.fail_count = 0
-        self.first_mini = 1
-        self.ts = ocr.My_TS(father=self)
-        self.last_info = ""
-        self.mini_target = 0
-        self.f_time = 0
-        self.init_ang = 0
-        self.allow_e = 1
-        self.quan = 0
-        self.img_map = dict()
-        self.tk = ocr.text_keys(self.my_fate)
-        self.find = 1
+        self.tss = "ey.jpg"
         self.lst_mask = None
         self.event_mask = None
-        self.bx, self.by = 1920, 1080
-        log.warning("等待游戏窗口")
-        self.tss = "ey.jpg"
-        ctx = wait_for_game_window_context(log=log)
-        self.x0, self.y0, self.x1, self.y1 = ctx.x0, ctx.y0, ctx.x1, ctx.y1
-        self.xx, self.yy = ctx.width, ctx.height
-        self.full = ctx.is_fullscreen
-        self.scx, self.scy = ctx.scx, ctx.scy
-        self.scale = ctx.dpi_scale
-        self.real_width = ctx.real_width
+
+        # OCR 相关
+        self.ts = ocr.My_TS(father=self)
+        self.tk = ocr.text_keys(self.my_fate)
+
+        # 日志输出
         log.info("DPI: " + str(self.scale) + " A:" + str(int(self.multi * 100) / 100))
-        log.info("TEXT: " + str(ctx.title))
-        if self.xx != 1920 or self.yy != 1080:
-            log.error(f"分辨率错误 {self.xx} {self.yy} 请设为1920*1080")
-        self.sct = Screen()
 
-    def gen_hotkey_img(self, hotkey="e", bg="imgs/f_bg.jpg"):
-        # 通用实现:diver/simul 完全一致,抽到共享模块减少重复维护
-        return common_gen_hotkey_img(hotkey=hotkey, bg=bg)
+    # ===== diver 特有的方法或需要覆盖的方法 =====
 
-    def press(self, c, t=0):
-        # 通用实现
-        return common_press_key(
-            key=c,
-            duration=t,
-            log=log,
-            keyops=keyops,
-            allow_e=bool(self.allow_e),
-            stop_flag=lambda: self._stop,
+    def format_path(self, path):
+        """diver 使用 imgs/ 前缀 (无 ./ )."""
+        return f"imgs/{path}.jpg"
+
+    def get_screen(self):
+        """获取游戏窗口截屏.
+
+        diver 特有实现: 检查游戏窗口是否在前台.
+        """
+        hwnd = win32gui.GetForegroundWindow()
+        title = win32gui.GetWindowText(hwnd)
+        while not is_game_window(title) and not self._stop:
+            log.warning("等待游戏窗口")
+            time.sleep(0.5)
+            hwnd = win32gui.GetForegroundWindow()
+            title = win32gui.GetWindowText(hwnd)
+        self.screen = self.sct.grab(self.x0, self.y0)
+        return self.screen
+
+    def click_text(self, text, click=1):
+        """点击匹配的文本.
+
+        diver 特有实现: 使用 find_with_text 方法.
+        """
+        img = self.get_screen()
+        pt = self.ts.find_with_text([text])
+        if pt:
+            box = pt[0]["box"]
+            center_x = (box[0] + box[1]) / 2
+            center_y = (box[2] + box[3]) / 2
+            if click:
+                self.click(
+                    (
+                        1 - center_x / self.xx,
+                        1 - center_y / self.yy,
+                    )
+                )
+            return 1
+        return 0
+
+    def click_target(self, target_path, threshold, flag=True):
+        """点击与模板匹配的点.
+
+        diver 特有实现: exit_on_found=False, 打印 template.shape.
+        """
+        from utils.common.vision import click_target as common_click_target
+
+        def _on_found(points, _result, template):
+            self.get_point(*points)
+            log.info(f"target shape: {template.shape}")
+
+        common_click_target(
+            target_path=target_path,
+            threshold=threshold,
+            must_match=bool(flag),
+            print_func=print,
+            on_found=_on_found,
+            exit_on_found=False,
         )
 
-    def sprint(self):
-        return common_sprint(
-            log=log,
-            keyops=keyops,
-            press=lambda key, duration=0: self.press(key, duration),
-        )
+    # ===== diver 特有的业务方法 =====
 
-    # example: self.wait_fig(lambda:self.check("curio", 0.9417, 0.9481), 1.4)
-    def wait_fig(self, f, timeout=3):
-        return common_wait_fig(predicate=f, timeout=timeout, get_screen=self.get_screen)
+    # 以下为 diver 特有的业务方法，基类中的通用方法已删除
 
     def use_it(self, x, y):
         if x != 1 or y != 1:
@@ -254,172 +198,7 @@ class UniverseUtils:
                 if self.wait_fig(lambda: not self.isrun(), 3):
                     return
 
-    def get_point(self, x, y):
-        # 通用实现:diver/simul 完全一致
-        return common_debug_print_point(
-            x=x,
-            y=y,
-            x1=self.x1,
-            y1=self.y1,
-            window_width=self.xx,
-            window_height=self.yy,
-            print_func=print,
-        )
-
-    def calc_point(self, point, offset):
-        return common_calc_point(
-            point=point,
-            offset=offset,
-            window_width=self.xx,
-            window_height=self.yy,
-        )
-
-    def click_box(self, box):
-        return common_click_box(
-            box=box,
-            window_width=self.xx,
-            window_height=self.yy,
-            click=self.click,
-        )
-
-    def click_position(self, position):
-        return common_click_position(
-            position=position,
-            window_width=self.xx,
-            window_height=self.yy,
-            click=self.click,
-        )
-
-    def click_text(self, text, click=1):
-        img = self.get_screen()
-        pt = self.ts.find_with_text([text])
-        if pt:
-            box = pt[0]["box"]
-            # box 格式为 [xmin, xmax, ymin, ymax]
-            center_x = (box[0] + box[1]) / 2
-            center_y = (box[2] + box[3]) / 2
-            if click:
-                self.click(
-                    (
-                        1 - center_x / self.xx,
-                        1 - center_y / self.yy,
-                    )
-                )
-            return 1
-        return 0
-
-    # 由click_target调用,返回图片匹配结果
-    def scan_screenshot(self, prepared):
-        return common_scan_screenshot(prepared)
-
-    # 计算匹配中心点坐标
-    def calculated(self, result, shape):
-        return common_calculated(result, shape)
-
-    # 点击一个点
-    def click(self, points, click=1):
-        return common_click(
-            points=points,
-            click_enabled=bool(click),
-            debug_level=0,
-            print_func=print,
-            print_stack=self.print_stack,
-            x1=self.x1,
-            y1=self.y1,
-            window_width=self.xx,
-            window_height=self.yy,
-            is_fullscreen=bool(self.full),
-            stop_flag=lambda: self._stop,
-        )
-
-    # 拖动
-    def drag(self, pt1, pt2):
-        # 通用实现:坐标换算 + 全屏偏移 + pyautogui.drag
-        return common_drag(
-            start=pt1,
-            end=pt2,
-            x1=self.x1,
-            y1=self.y1,
-            window_width=self.xx,
-            window_height=self.yy,
-            is_fullscreen=bool(self.full),
-        )
-
-    # 点击与模板匹配的点,flag=True表示必须匹配,不匹配就会一直寻找直到出现匹配
-    def click_target(self, target_path, threshold, flag=True):
-        def _on_found(points, _result, template):
-            self.get_point(*points)
-            log.info(f"target shape: {template.shape}")
-
-        common_click_target(
-            target_path=target_path,
-            threshold=threshold,
-            must_match=bool(flag),
-            print_func=print,
-            on_found=_on_found,
-            exit_on_found=False,
-        )
-        return
-
-    # 在截图中裁剪需要匹配的部分
-    def get_local(self, x, y, size, large=True):
-        return common_get_local(
-            screen=self.screen,
-            window_width=self.xx,
-            window_height=self.yy,
-            x_ratio=x,
-            y_ratio=y,
-            size=(size[0], size[1]),
-            large=bool(large),
-        )
-
-    def format_path(self, path):
-        return f"imgs/{path}.jpg"
-
-    # 判断截图中匹配中心点附近是否存在匹配模板
-    # path:匹配模板的路径,x,y:匹配中心点,mask:如果存在,则以mask大小为基准裁剪截图,threshold:匹配阈值
-    def check(self, path, x, y, mask=None, threshold=None, large=True):
-        if threshold is None:
-            threshold = self.threshold
-        formatted_target_path = self.format_path(path)
-        target = cv.imread(formatted_target_path)
-        if formatted_target_path == "imgs/f.jpg":
-            # 使用默认的 f 键图片
-            pass
-            threshold -= 0.01
-
-        match = match_template_near_point(
-            cv=cv,
-            screen=self.screen,
-            read_image=cv.imread,
-            format_path=self.format_path,
-            get_local=lambda x_ratio, y_ratio, size, large_flag: self.get_local(
-                x_ratio, y_ratio, size, large_flag
-            ),
-            path=path,
-            x_ratio=x,
-            y_ratio=y,
-            scx=float(self.scx),
-            threshold=float(threshold),
-            mask=mask,
-            large=bool(large),
-            target_image=target,
-        )
-
-        if large == False:
-            return match.local_screen
-
-        self.tx = match.tx
-        self.ty = match.ty
-        self.tm = match.max_val
-        if match.max_val > threshold:
-            if self.last_info != formatted_target_path:
-                log.info(
-                    "匹配到图片 %s 相似度 %f 阈值 %f"
-                    % (formatted_target_path, match.max_val, threshold)
-                )
-            self.last_info = formatted_target_path
-        return match.matched
+    # 以下方法已移到基类，删除重复定义
 
     def click_img(self, path, threshold=0.95):
         path = self.format_path(path)
@@ -548,12 +327,12 @@ class UniverseUtils:
     # 从全屏截屏中裁剪得到游戏窗口截屏
     def get_screen(self):
         hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
-        Text = win32gui.GetWindowText(hwnd)
-        while Text != "崩坏：星穹铁道" and Text != "云.星穹铁道" and not self._stop:
+        title = win32gui.GetWindowText(hwnd)
+        while not is_game_window(title) and not self._stop:
             log.warning("等待游戏窗口")
             time.sleep(0.5)
             hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
-            Text = win32gui.GetWindowText(hwnd)
+            title = win32gui.GetWindowText(hwnd)
         self.screen = self.sct.grab(self.x0, self.y0)
         return self.screen
 

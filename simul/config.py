@@ -29,10 +29,11 @@ class Config(ConfigBase):
         # ===== 从 data/defaults.json 加载默认值 =====
         defaults = self.get_default_config()
 
-        # ===== 模拟宇宙特有配置 =====
-        self.order_text = "1 2 3 4"
-        self.fate = "巡猎"
-        self.fates = list(defaults["simul_fates"])
+        # ===== 模拟宇宙特有配置 (从 JSON 读取默认值) =====
+        default_order = defaults.get("default_order_text", [1, 2, 3, 4])
+        self.order_text = " ".join(str(x) for x in default_order)
+        self.fate = str(defaults.get("default_fate", "巡猎"))
+        self.fates = list(defaults.get("simul_fates", []))
         self.map_sha = ""
 
         # 模式开关
@@ -125,8 +126,8 @@ class Config(ConfigBase):
 
     @property
     def default_threshold(self) -> float:
-        """默认匹配阈值."""
-        return self.DEFAULT_THRESHOLD
+        """默认匹配阈值 (从 defaults.json 读取)."""
+        return self.get_default_threshold()
 
 
 config = Config()
