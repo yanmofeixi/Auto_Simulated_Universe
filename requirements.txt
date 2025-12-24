@@ -18,16 +18,8 @@ winotify>=1.0.0
 pystray>=0.19.5
 mss>=9.0.1
 
-# 数值计算 - 针对 Python 3.13+ 优化
+# 数值计算
 numpy>=2.0.0
 
-# OCR 推理引擎:CUDA (NVIDIA)
-# 说明:
-# - 本项目当前不再使用 TensorRT,仅使用 CUDAExecutionProvider.
-# - Python 3.13 下请使用支持 CUDA 13 的 onnxruntime-gpu(nightly).
-onnxruntime-gpu==1.24.0.dev20251215001
-
-# CUDA 运行库(来自 NVIDIA PyPI 源 https://pypi.nvidia.com)
-nvidia-cuda-runtime==13.0.88
-nvidia-cublas==13.2.0.9
-nvidia-cudnn-cu13==9.17.0.29
+# OCR 推理引擎: CPU
+onnxruntime>=1.16.0

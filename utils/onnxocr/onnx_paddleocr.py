@@ -21,7 +21,7 @@ class ONNXPaddleOcr(TextSystem):
         params.rec_image_shape = "3, 48, 320"
 
         # 根据传入的参数覆盖更新默认参数
-        params.__dict__.update({"cpu": False})
+        params.__dict__.update({"cpu": True})
         params.__dict__.update(**kwargs)
 
         # 初始化模型
@@ -50,7 +50,7 @@ def sav2Img(org_img, result, name="draw_ocr.jpg"):
 if __name__ == '__main__':
     import cv2
 
-    model = ONNXPaddleOcr(use_angle_cls=True, use_gpu=False)
+    model = ONNXPaddleOcr(use_angle_cls=True)
 
 
     img = cv2.imread('/data2/liujingsong3/fiber_box/test/img/20230531230052008263304.jpg')

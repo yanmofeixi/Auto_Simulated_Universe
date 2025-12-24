@@ -190,7 +190,6 @@ class GUIServerHandler(SimpleHTTPRequestHandler):
                     "difficulty": defaults.get("default_difficulty", 5),
                     "timezone": defaults.get("default_timezone", "Default"),
                     "accuracy": defaults.get("accuracy", 1440),
-                    "ocr_use_gpu": False,
                     "team": defaults.get("default_team", "终结技"),
                     "skill": characters.get("skill_characters", []),
                     "portal_prior": defaults.get("diver_portal_prior", {}),

@@ -48,9 +48,6 @@ class Config(ConfigBase):
         # 队伍类型
         self.team = defaults["default_team"]
 
-        # OCR 是否使用 GPU 加速(小模型场景下 CPU 反而更快)
-        self.ocr_use_gpu = False
-
         # 读取配置
         self.read()
 
@@ -137,9 +134,6 @@ class Config(ConfigBase):
             portal_prior_value = config_data.get("portal_prior")
             if isinstance(portal_prior_value, dict):
                 self.portal_prior = portal_prior_value
-
-            # 读取 OCR GPU 配置
-            self.ocr_use_gpu = bool(config_data.get("ocr_use_gpu", self.ocr_use_gpu))
         else:
             self.save()
 
@@ -156,7 +150,6 @@ class Config(ConfigBase):
                     "accuracy": self.accuracy,
                     "enable_portal_prior": self.enable_portal_prior,
                     "portal_prior": self.portal_prior,
-                    "ocr_use_gpu": self.ocr_use_gpu,
                 },
             }
         )
