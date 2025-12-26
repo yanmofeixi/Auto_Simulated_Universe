@@ -121,26 +121,6 @@ class UniverseUtils(UniverseUtilsBase):
             return 1
         return 0
 
-    def click_target(self, target_path, threshold, flag=True):
-        """点击与模板匹配的点.
-
-        diver 特有实现: exit_on_found=False, 打印 template.shape.
-        """
-        from utils.common.vision import click_target as common_click_target
-
-        def _on_found(points, _result, template):
-            self.get_point(*points)
-            log.info(f"target shape: {template.shape}")
-
-        common_click_target(
-            target_path=target_path,
-            threshold=threshold,
-            must_match=bool(flag),
-            print_func=print,
-            on_found=_on_found,
-            exit_on_found=False,
-        )
-
     # ===== diver 特有的业务方法 =====
 
     # 以下为 diver 特有的业务方法，基类中的通用方法已删除
@@ -298,32 +278,6 @@ class UniverseUtils(UniverseUtilsBase):
                 time.sleep(0.3)
         return 1
 
-    # 计算旋转变换矩阵
-    def handle_rotate_val(self, x, y, rotate):
-        cos_val = np.cos(np.deg2rad(rotate))
-        sin_val = np.sin(np.deg2rad(rotate))
-        return np.float32(
-            [
-                [cos_val, sin_val, x * (1 - cos_val) - y * sin_val],
-                [-sin_val, cos_val, x * sin_val + y * (1 - cos_val)],
-            ]
-        )
-
-    # 图像旋转(以任意点为中心旋转)
-    def image_rotate(self, src, rotate=0):
-        h, w, c = src.shape
-        M = self.handle_rotate_val(w // 2, h // 2, rotate)
-        img = cv.warpAffine(src, M, (w, h))
-        return img
-
-    # 初步裁剪小地图,并增强小地图中的蓝色箭头
-    def exist_minimap(self):
-        self.loc_scr = common_exist_minimap(
-            get_screen=self.get_screen,
-            get_local=lambda x, y, size, large=True: self.get_local(x, y, size, large),
-            scx=float(self.scx),
-        )
-
     # 从全屏截屏中裁剪得到游戏窗口截屏
     def get_screen(self):
         hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
@@ -335,16 +289,6 @@ class UniverseUtils(UniverseUtilsBase):
             title = win32gui.GetWindowText(hwnd)
         self.screen = self.sct.grab(self.x0, self.y0)
         return self.screen
-
-    # 移动视角,获得小地图中不变的部分(白线,灰块)
-    def take_fine_minimap(self, n=5, dt=0.01, dy=200):
-        return common_take_fine_minimap(
-            get_screen=self.get_screen,
-            exist_minimap_fn=lambda: (self.exist_minimap() or self.loc_scr),
-            n=n,
-            dt=dt,
-            dy=dy,
-        )
 
     # 进一步得到小地图的黑白格式
     # gs:是否重新截图
@@ -400,14 +344,6 @@ class UniverseUtils(UniverseUtilsBase):
         if self.find == 0:
             cv.imwrite(self.map_file + "bwmap.jpg", bw_map)
         return bw_map
-
-    # 计算小地图中蓝色箭头的角度
-    def get_now_direc(self, loc_scr):
-        return common_get_now_direc(
-            cv=cv,
-            loc_scr=loc_scr,
-            arrow_template_path=self.format_path("loc_arrow"),
-        )
 
     def get_level(self):
         while not self.isrun():

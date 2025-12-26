@@ -99,34 +99,6 @@ def wait_fig(
     return 0
 
 
-def debug_print_point(
-    *,
-    x: int,
-    y: int,
-    x1: int,
-    y1: int,
-    window_width: int,
-    window_height: int,
-    print_func=print,
-) -> None:
-    """打印坐标点的浮点表示(用于调试).
-
-    该逻辑在 diver/simul 的 `UniverseUtils.get_point` 中完全一致.
-
-    参数说明:
-    - x, y: 屏幕坐标(像素)
-    - x1, y1: 窗口右下角坐标(像素,来自 GetWindowRect)
-    - window_width/window_height: 窗口宽高(像素)
-    - print_func: 输出函数(diver 侧可能是 utils.log.my_print)
-    """
-
-    local_x = x1 - x
-    local_y = y1 - y
-    print_func(
-        "获取到点:{:.4f},{:.4f}".format(local_x / window_width, local_y / window_height)
-    )
-
-
 def calc_point(
     *,
     point: tuple[float, float],
@@ -181,53 +153,6 @@ def click_position(
         window_height=window_height,
         click=click,
     )
-
-
-def drag(
-    *,
-    start: tuple[float, float],
-    end: tuple[float, float],
-    x1: int,
-    y1: int,
-    window_width: int,
-    window_height: int,
-    is_fullscreen: bool,
-    fullscreen_offset_px: int = 9,
-    pre_delay_s: float = 0.2,
-    drag_duration_s: float = 0.4,
-    post_delay_s: float = 0.3,
-) -> None:
-    """拖动(归一化坐标 -> 像素坐标).
-
-    start/end 为归一化坐标(与 UniverseUtils.click/drag 的传参一致).
-    说明:
-    - 与历史实现保持一致:先 SetCursorPos 到起点,再 pyautogui.drag 到终点偏移.
-    - 全屏模式会额外 +9 像素偏移.
-    """
-
-    import pyautogui
-
-    # 延迟导入:避免在不需要拖动的场景引入 GUI 依赖
-    import win32api
-
-    start_x_ratio, start_y_ratio = start
-    end_x_ratio, end_y_ratio = end
-
-    start_x = x1 - int(start_x_ratio * window_width)
-    start_y = y1 - int(start_y_ratio * window_height)
-    end_x = x1 - int(end_x_ratio * window_width)
-    end_y = y1 - int(end_y_ratio * window_height)
-
-    if is_fullscreen:
-        start_x += fullscreen_offset_px
-        start_y += fullscreen_offset_px
-        end_x += fullscreen_offset_px
-        end_y += fullscreen_offset_px
-
-    win32api.SetCursorPos((start_x, start_y))
-    time.sleep(pre_delay_s)
-    pyautogui.drag(end_x - start_x, end_y - start_y, drag_duration_s)
-    time.sleep(post_delay_s)
 
 
 def click(

@@ -3,7 +3,6 @@
 抽离点:
 - exist_minimap:裁剪并强化蓝色箭头
 - get_now_direc:通过旋转模板匹配求当前角度
-- take_fine_minimap:通过上下抖动视角生成“细化小地图”
 
 注意:
 - get_bw_map 依赖大量上层状态(find/check/map_file/debug),本次先不强行抽掉,
@@ -11,8 +10,6 @@
 """
 
 from __future__ import annotations
-
-import time
 
 from typing import Callable, Tuple
 
@@ -83,54 +80,3 @@ def get_now_direc(*, cv, loc_scr, arrow_template_path: str):
             mx_acc = float(max_val)
             ang = int(i)
     return ang
-
-
-def take_fine_minimap(
-    *,
-    get_screen: Callable[[], object],
-    exist_minimap_fn: Callable[[], object],
-    n: int = 5,
-    dt: float = 0.01,
-    dy: int = 200,
-    out_img_path: str = "imgs/fine_minimap.jpg",
-    out_mask_path: str = "imgs/fine_mask.jpg",
-):
-    """移动视角并生成小地图中不变部分(白线/灰块)的细化图."""
-
-    from copy import deepcopy
-
-    import cv2 as cv
-    import numpy as np
-    import win32api
-    import win32con
-
-    get_screen()
-    local_scr = exist_minimap_fn()
-
-    total_img = local_scr
-    total_mask = 255 * np.array(total_img.shape)
-
-    n = 4
-    for _ in range(n):
-        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, -dy, 0, 0)
-        get_screen()
-        local_scr = exist_minimap_fn()
-        mask = cv.compare(total_img, local_scr, cv.CMP_EQ)
-        total_mask = cv.bitwise_and(total_mask, mask)
-        total_img = cv.bitwise_and(total_mask, total_img)
-        time.sleep(dt)
-
-    time.sleep(0.1)
-
-    for _ in range(n // 2):
-        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 2 * dy, 0, 0)
-        get_screen()
-        local_scr = exist_minimap_fn()
-        mask = cv.compare(total_img, local_scr, cv.CMP_EQ)
-        total_mask = cv.bitwise_and(total_mask, mask)
-        total_img = cv.bitwise_and(total_mask, total_img)
-        time.sleep(dt)
-
-    cv.imwrite(out_img_path, total_img)
-    cv.imwrite(out_mask_path, total_mask)
-    return total_img, total_mask

@@ -48,13 +48,10 @@ from utils.common.image_processing import (
     dilate,
     euclidean_distance,
     extract_orb_features,
-    match_features,
-    rotate_image,
 )
 from utils.common.minimap_ops import (
     exist_minimap as common_exist_minimap,
     get_now_direc as common_get_now_direc,
-    take_fine_minimap as common_take_fine_minimap,
 )
 from utils.common.screen_ops import get_local as common_get_local
 from utils.common.template_match import match_template_near_point
@@ -63,17 +60,10 @@ from utils.common.ui_ops import (
     click as common_click,
     click_box as common_click_box,
     click_position as common_click_position,
-    debug_print_point as common_debug_print_point,
-    drag as common_drag,
     gen_hotkey_img as common_gen_hotkey_img,
     press_key as common_press_key,
     sprint as common_sprint,
     wait_fig as common_wait_fig,
-)
-from utils.common.vision import (
-    calculated as common_calculated,
-    click_target as common_click_target,
-    scan_screenshot as common_scan_screenshot,
 )
 from utils.common.window_manager import (
     set_game_foreground,
@@ -230,18 +220,6 @@ class UniverseUtilsBase:
 
     # ===== 坐标计算 =====
 
-    def get_point(self, x: int, y: int):
-        """打印坐标点的浮点表示 (用于调试)."""
-        return common_debug_print_point(
-            x=x,
-            y=y,
-            x1=self.x1,
-            y1=self.y1,
-            window_width=self.xx,
-            window_height=self.yy,
-            print_func=print,
-        )
-
     def calc_point(
         self, point: Tuple[float, float], offset: Tuple[float, float]
     ) -> Tuple[float, float]:
@@ -292,51 +270,6 @@ class UniverseUtilsBase:
             window_width=self.xx,
             window_height=self.yy,
             click=self.click,
-        )
-
-    def drag(self, pt1: Tuple[float, float], pt2: Tuple[float, float]):
-        """拖动操作."""
-        return common_drag(
-            start=pt1,
-            end=pt2,
-            x1=self.x1,
-            y1=self.y1,
-            window_width=self.xx,
-            window_height=self.yy,
-            is_fullscreen=bool(self.full),
-        )
-
-    # ===== 视觉函数 =====
-
-    def scan_screenshot(self, prepared):
-        """返回图片匹配结果."""
-        return common_scan_screenshot(prepared)
-
-    def calculated(self, result, shape):
-        """计算匹配中心点坐标."""
-        return common_calculated(result, shape)
-
-    def click_target(self, target_path: str, threshold: float, flag: bool = True):
-        """点击与模板匹配的点.
-
-        Args:
-            target_path: 模板图片路径
-            threshold: 匹配阈值
-            flag: True 表示必须匹配
-        """
-
-        def _on_found(points, _result, template):
-            self.get_point(*points)
-            if self.log:
-                self.log.info(f"target shape: {template.shape}")
-
-        common_click_target(
-            target_path=target_path,
-            threshold=threshold,
-            must_match=bool(flag),
-            print_func=print,
-            on_found=_on_found,
-            exit_on_found=False,
         )
 
     # ===== 截图函数 =====
@@ -449,16 +382,6 @@ class UniverseUtilsBase:
             get_screen=self.get_screen,
             get_local=lambda x, y, size, large=True: self.get_local(x, y, size, large),
             scx=float(self.scx),
-        )
-
-    def take_fine_minimap(self, n: int = 5, dt: float = 0.01, dy: int = 200):
-        """移动视角,获得小地图中不变的部分 (白线, 灰块)."""
-        return common_take_fine_minimap(
-            get_screen=self.get_screen,
-            exist_minimap_fn=lambda: (self.exist_minimap() or self.loc_scr),
-            n=n,
-            dt=dt,
-            dy=dy,
         )
 
     def get_now_direc(self, loc_scr: "ndarray") -> float:
@@ -611,15 +534,6 @@ class UniverseUtilsBase:
     def extract_features(self, img: "ndarray") -> Optional["ndarray"]:
         """提取 ORB 特征描述符."""
         return extract_orb_features(img, border=50)
-
-    def match_two(self, img1: "ndarray", img2: "ndarray") -> float:
-        """匹配两张图片的相似度."""
-        key1 = self.extract_features(img1)
-        key2 = self.extract_features(img2)
-        similarity = match_features(key1, key2)
-        if self.log:
-            self.log.info(f"相似度:{similarity}")
-        return similarity
 
     # ===== 距离计算 =====
 

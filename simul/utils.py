@@ -104,25 +104,6 @@ class UniverseUtils(UniverseUtilsBase):
             return 1
         return 0
 
-    def click_target(self, target_path, threshold, flag=True):
-        """点击与模板匹配的点.
-
-        simul 特有实现: exit_on_found=True.
-        """
-        from utils.common.vision import click_target as common_click_target
-
-        def _on_found(points, _result, _template):
-            self.get_point(*points)
-
-        common_click_target(
-            target_path=target_path,
-            threshold=threshold,
-            must_match=bool(flag),
-            print_func=print,
-            on_found=_on_found,
-            exit_on_found=True,
-        )
-
     def click(self, points, click=1):
         """点击一个点.
 
@@ -300,24 +281,6 @@ class UniverseUtils(UniverseUtilsBase):
                 self.mouse_move(dx / 4)
                 time.sleep(0.3)
         return 1
-
-    # 计算旋转变换矩阵
-    def handle_rotate_val(self, x, y, rotate):
-        cos_val = np.cos(np.deg2rad(rotate))
-        sin_val = np.sin(np.deg2rad(rotate))
-        return np.float32(
-            [
-                [cos_val, sin_val, x * (1 - cos_val) - y * sin_val],
-                [-sin_val, cos_val, x * sin_val + y * (1 - cos_val)],
-            ]
-        )
-
-    # 图像旋转(以任意点为中心旋转)
-    def image_rotate(self, src, rotate=0):
-        h, w, c = src.shape
-        M = self.handle_rotate_val(w // 2, h // 2, rotate)
-        img = cv.warpAffine(src, M, (w, h))
-        return img
 
     # simul 特有: get_bw_map 需要在 find==0 时写文件
     def get_bw_map(self, gs=1, local_screen=None):

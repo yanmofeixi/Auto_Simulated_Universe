@@ -245,16 +245,6 @@ class ConfigBase:
             return data
 
     @classmethod
-    def clear_data_cache(cls) -> None:
-        """清除数据文件缓存.
-
-        用于测试或需要强制重新加载数据时.
-        """
-        cls._data_cache.clear()
-        cls._defaults_loaded = False
-        cls._defaults = {}
-
-    @classmethod
     def get_default_threshold(cls) -> float:
         """获取默认阈值.
 
@@ -266,19 +256,6 @@ class ConfigBase:
         """
         defaults = cls.load_data_file("defaults.json")
         return float(defaults["threshold"])
-
-    @classmethod
-    def get_default_accuracy(cls) -> int:
-        """获取默认精确度.
-
-        Returns:
-            默认精确度
-
-        Raises:
-            KeyError: 如果 defaults.json 中缺少 accuracy 字段
-        """
-        defaults = cls.load_data_file("defaults.json")
-        return int(defaults["accuracy"])
 
     @classmethod
     def get_default_config(cls) -> Dict[str, Any]:

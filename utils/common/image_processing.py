@@ -54,25 +54,6 @@ def create_color_mask(
     return mask
 
 
-def create_hsv_mask(
-    image: ndarray,
-    lower: ndarray,
-    upper: ndarray,
-) -> ndarray:
-    """创建 HSV 范围掩码.
-
-    Args:
-        image: 输入图像 (BGR 格式)
-        lower: HSV 下界
-        upper: HSV 上界
-
-    Returns:
-        二值掩码
-    """
-    hsv = cv.cvtColor(image, cv.COLOR_BGR2HSV)
-    return cv.inRange(hsv, lower, upper)
-
-
 # ===== 形态学操作 =====
 
 
@@ -95,92 +76,7 @@ def dilate(
     return cv.dilate(mask, kernel, iterations=iterations)
 
 
-def erode(
-    mask: ndarray,
-    kernel_size: Tuple[int, int],
-    iterations: int = 1,
-) -> ndarray:
-    """腐蚀操作.
-
-    Args:
-        mask: 输入掩码
-        kernel_size: 核大小 (height, width)
-        iterations: 迭代次数
-
-    Returns:
-        腐蚀后的掩码
-    """
-    kernel = np.ones(kernel_size, np.uint8)
-    return cv.erode(mask, kernel, iterations=iterations)
-
-
-def morphology_close(
-    mask: ndarray,
-    kernel_size: Tuple[int, int],
-) -> ndarray:
-    """闭运算 (先膨胀后腐蚀).
-
-    Args:
-        mask: 输入掩码
-        kernel_size: 核大小
-
-    Returns:
-        处理后的掩码
-    """
-    kernel = np.ones(kernel_size, np.uint8)
-    return cv.morphologyEx(mask, cv.MORPH_CLOSE, kernel)
-
-
 # ===== 小地图处理 =====
-
-
-def create_bw_map_mask(
-    local_screen: ndarray,
-    find_mode: int = 1,
-) -> ndarray:
-    """创建小地图的黑白掩码.
-
-    根据小地图截图生成黑白格式的地图,用于导航和匹配.
-
-    Args:
-        local_screen: 小地图截图
-        find_mode: 寻路模式 (0=录图, 1=寻路)
-
-    Returns:
-        黑白格式的小地图掩码
-    """
-    gray_threshold = (
-        ColorThresholds.MINIMAP_GRAY_BASE
-        + find_mode * ColorThresholds.MINIMAP_GRAY_FIND_BONUS
-    )
-    black_threshold = (
-        ColorThresholds.MINIMAP_BLACK_BASE
-        + find_mode * ColorThresholds.MINIMAP_BLACK_FIND_BONUS
-    )
-    white_threshold = (
-        ColorThresholds.MINIMAP_WHITE_BASE
-        + find_mode * ColorThresholds.MINIMAP_WHITE_FIND_BONUS
-    )
-
-    bw_map = np.zeros(local_screen.shape[:2], dtype=np.uint8)
-
-    # 灰块检测
-    b_map = create_color_mask(local_screen, Colors.GRAY, gray_threshold)
-
-    # 黑色区域检测
-    blk_map = create_color_mask(local_screen, Colors.BLACK, black_threshold)
-
-    # 膨胀黑色区域
-    dilate(blk_map, MorphologyKernels.MINIMAP_BLACK_DILATE)
-
-    # 膨胀灰色区域
-    b_map = dilate(b_map, MorphologyKernels.MINIMAP_GRAY_DILATE)
-
-    # 白线检测 (需要在灰块附近)
-    white_mask = create_color_mask(local_screen, Colors.WHITE_210, white_threshold)
-    bw_map[(white_mask > 0) & (b_map > 200)] = 255
-
-    return bw_map
 
 
 def crop_minimap(
@@ -360,66 +256,6 @@ def extract_orb_features(
     orb = cv.ORB_create()
     keypoints, descriptors = orb.detectAndCompute(cropped, None)
     return descriptors
-
-
-def match_features(
-    desc1: ndarray,
-    desc2: ndarray,
-) -> float:
-    """匹配两组 ORB 特征描述符.
-
-    Args:
-        desc1: 第一组描述符
-        desc2: 第二组描述符
-
-    Returns:
-        相似度分数 (0-1)
-    """
-    if desc1 is None or desc2 is None:
-        return 0.0
-
-    matcher = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
-    try:
-        matches = matcher.match(desc1, desc2)
-        similarity = len(matches) / max(len(desc1), len(desc2))
-        return similarity
-    except cv.error:
-        return 0.0
-
-
-# ===== 图像旋转 =====
-
-
-def rotate_image(
-    image: ndarray,
-    angle: float,
-    center: Optional[Tuple[int, int]] = None,
-) -> ndarray:
-    """以指定点为中心旋转图像.
-
-    Args:
-        image: 输入图像
-        angle: 旋转角度 (度)
-        center: 旋转中心,默认为图像中心
-
-    Returns:
-        旋转后的图像
-    """
-    h, w = image.shape[:2]
-    if center is None:
-        center = (w // 2, h // 2)
-
-    cos_val = np.cos(np.deg2rad(angle))
-    sin_val = np.sin(np.deg2rad(angle))
-
-    M = np.float32(
-        [
-            [cos_val, sin_val, center[0] * (1 - cos_val) - center[1] * sin_val],
-            [-sin_val, cos_val, center[0] * sin_val + center[1] * (1 - cos_val)],
-        ]
-    )
-
-    return cv.warpAffine(image, M, (w, h))
 
 
 # ===== 距离计算 =====

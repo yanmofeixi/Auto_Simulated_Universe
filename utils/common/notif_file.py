@@ -86,20 +86,3 @@ def write_notif_file(
         return 0
 
 
-def read_notif_file(*, file_name: str = "logs/notif.txt") -> Tuple[str, str, str, str]:
-    """读取 notif.txt 的四行内容.
-
-    返回 (cnt, title, msg, tm).任何缺失行会被置为空字符串.
-    """
-
-    if not os.path.exists(file_name):
-        return "", "", "", ""
-
-    try:
-        with open(file_name, "r", encoding="utf-8", errors="ignore") as fh:
-            lines = [line.rstrip("\n") for line in fh.readlines()]
-        while len(lines) < 4:
-            lines.append("")
-        return lines[0], lines[1], lines[2], lines[3]
-    except Exception:
-        return "", "", "", ""
