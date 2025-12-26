@@ -9,7 +9,7 @@ scriptDir = fso.GetParentFolderName(WScript.ScriptFullName)
 
 ' 使用 pythonw 运行(无控制台窗口)
 pythonwPath = "pythonw"
-serverScript = scriptDir & "\gui_server.py"
+serverScript = scriptDir & "\gui\server.py"
 
 ' 尝试运行
 On Error Resume Next

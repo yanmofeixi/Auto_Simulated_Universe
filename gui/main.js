@@ -31,7 +31,7 @@ async function checkServer() {
   } catch (e) {
     document.getElementById("serverStatusText").textContent = "未连接";
     document.getElementById("serverStatusText").style.color = "var(--danger)";
-    showStatus("服务器未启动,请先运行 gui_server.py", "error");
+    showStatus("服务器未启动,请先运行 python gui/server.py", "error");
   }
 }
 

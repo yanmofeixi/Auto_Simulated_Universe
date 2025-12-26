@@ -16,9 +16,9 @@ from urllib.parse import urlparse
 
 import yaml
 
-# 项目根目录
-ROOT_DIR = Path(__file__).parent
-GUI_DIR = ROOT_DIR / "gui"
+# 项目根目录（server.py 现在在 gui 子目录中）
+ROOT_DIR = Path(__file__).parent.parent
+GUI_DIR = Path(__file__).parent
 DATA_DIR = ROOT_DIR / "data"
 CONFIG_FILE = ROOT_DIR / "info.yml"
 DEFAULTS_FILE = DATA_DIR / "defaults.json"

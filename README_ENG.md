@@ -52,7 +52,7 @@ pip install -r requirements.txt
 **Command Line**
 
 ```bash
-python gui_server.py
+python gui/server.py
 ```
 
 Your browser will automatically open `http://localhost:8520`, where you can configure all parameters in the interface.
@@ -136,8 +136,8 @@ The count resets automatically each week. To manually modify the count, edit `lo
 Auto_Simulated_Universe/
 ├── start_gui.vbs           # GUI launcher (hidden window)
 ├── start_gui.bat           # GUI launcher (shows console)
-├── gui_server.py           # GUI server
 ├── gui/                    # Web GUI files
+│   ├── server.py           # GUI server
 │   ├── index.html
 │   ├── styles.css
 │   └── main.js

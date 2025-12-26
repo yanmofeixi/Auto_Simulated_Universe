@@ -52,7 +52,7 @@ pip install -r requirements.txt
 **命令行启动**
 
 ```bash
-python gui_server.py
+python gui/server.py
 ```
 
 浏览器会自动打开 `http://localhost:8520`,在界面中配置各项参数.
@@ -136,8 +136,8 @@ python notif.py
 Auto_Simulated_Universe/
 ├── start_gui.vbs           # GUI 启动器(隐藏窗口)
 ├── start_gui.bat           # GUI 启动器(显示控制台)
-├── gui_server.py           # GUI 服务器
 ├── gui/                    # Web GUI 文件
+│   ├── server.py           # GUI 服务器
 │   ├── index.html
 │   ├── styles.css
 │   └── main.js

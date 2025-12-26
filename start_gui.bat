@@ -32,6 +32,6 @@ echo.
 echo 按 Ctrl+C 停止服务器
 echo ========================================
 echo.
-python gui_server.py
+python gui/server.py
 
 pause
