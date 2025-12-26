@@ -10,7 +10,6 @@ Honkai: Star Rail - Simulated Universe & Divergent Universe Full Automation Tool
 - 🌠 **Simulated Universe**: Fully automated regular Simulated Universe farming
 - 🖥️ **GUI**: Built-in Web GUI configuration panel, no manual config file editing required
 - 🎯 **Smart Recognition**: OCR-based text recognition for events, blessings, curios, etc.
-- ⚡ **GPU Acceleration**: Optional CUDA acceleration for OCR inference
 
 ## ⚠️ Disclaimer
 
@@ -26,7 +25,7 @@ According to miHoYo's [Honkai: Star Rail Fair Gaming Declaration](https://sr.mih
 ## 📋 System Requirements
 
 - Windows 10/11 (macOS/Linux only partially supported)
-- Python 3.11+
+- Python 3.12
 - Screen resolution: 1920×1080 or higher (windowed or fullscreen)
 - Game settings: HDR disabled, text language set to Simplified Chinese
 - Game interface must be unobstructed
@@ -93,7 +92,6 @@ If you prefer manual configuration, copy `info_example.yml` to `info.yml`, then 
 | Setting        | Description                                                       |
 | -------------- | ----------------------------------------------------------------- |
 | `accuracy`     | Image recognition accuracy, default 1440, range 960-1920          |
-| `ocr_use_gpu`  | Whether OCR uses GPU acceleration                                 |
 | `team`         | Team type: chase/dot/ultimate/break/shield counter/white e shield |
 | `skill`        | List of characters to use techniques in boss rooms                |
 | `portal_prior` | Portal priority (1-6, higher number = higher priority)            |

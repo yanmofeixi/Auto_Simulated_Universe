@@ -363,7 +363,6 @@ function populateForm() {
   // 差分宇宙配置
   document.getElementById("accuracy").value =
     cfg.accuracy ?? constants.default_accuracy ?? 1440;
-  document.getElementById("ocr_use_gpu").checked = cfg.ocr_use_gpu ?? false;
 
   // 模拟宇宙配置
   document.getElementById("use_consumable").checked = cfg.use_consumable === 1;
@@ -390,7 +389,6 @@ function collectFormData() {
 
     // 差分宇宙配置
     accuracy: parseInt(document.getElementById("accuracy").value),
-    ocr_use_gpu: document.getElementById("ocr_use_gpu").checked,
     team: document.getElementById("team").value,
     enable_portal_prior: 1,
     portal_prior: {},

@@ -18,7 +18,7 @@ from .rec_postprocess import CTCLabelDecode
 from .predict_base import PredictBase
 
 class TextRecognizer(PredictBase):
-    def __init__(self, args, cpu=False):
+    def __init__(self, args, cpu=True):
         super(TextRecognizer, self).__init__(cpu)
         self.rec_image_shape = [int(v) for v in args.rec_image_shape.split(",")]
         self.rec_batch_num = args.rec_batch_num
@@ -26,8 +26,8 @@ class TextRecognizer(PredictBase):
         self.inverse = getattr(args, "rec_image_inverse", False)
         self.postprocess_op = CTCLabelDecode(character_dict_path=args.rec_char_dict_path, use_space_char=args.use_space_char)
 
-        # 初始化模型(CUDA 优先)
-        self.rec_onnx_session = self.get_onnx_session(args.rec_model_dir, args.use_gpu)
+        # 初始化模型
+        self.rec_onnx_session = self.get_onnx_session(args.rec_model_dir)
         self.rec_input_name = self.get_input_name(self.rec_onnx_session)
         self.rec_output_name = self.get_output_name(self.rec_onnx_session)
 

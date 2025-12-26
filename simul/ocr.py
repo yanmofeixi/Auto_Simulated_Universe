@@ -14,7 +14,7 @@ from simul.config import config as simul_config
 class My_TS:
     def __init__(self, lang="ch"):
         self.lang = lang
-        self.ts = ONNXPaddleOcr(use_angle_cls=False)
+        self.ts = ONNXPaddleOcr(use_angle_cls=False, cpu=True)
         self.text = ""
 
     def is_edit_distance_at_most_one(self, str1, str2, ch):

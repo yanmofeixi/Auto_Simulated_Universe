@@ -20,12 +20,9 @@ from diver.config import config as diver_config
 
 
 class My_TS:
-    def __init__(self, lang: str = "ch", father: Any = None, use_gpu: bool | None = None):
+    def __init__(self, lang: str = "ch", father: Any = None):
         self.lang = lang
-        # 如果未指定 use_gpu,则从配置文件读取
-        if use_gpu is None:
-            use_gpu = diver_config.ocr_use_gpu
-        self.ts = ONNXPaddleOcr(use_angle_cls=False, cpu=not use_gpu, use_gpu=use_gpu)
+        self.ts = ONNXPaddleOcr(use_angle_cls=False, cpu=True)
         self.res: list[OcrItem] = []
         self.forward_img: Optional[np.ndarray] = None
         self.father = father
