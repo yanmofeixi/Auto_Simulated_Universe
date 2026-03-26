@@ -1,4 +1,4 @@
-﻿"""普通模拟宇宙自动化核心实现."""
+"""普通模拟宇宙自动化核心实现."""
 
 import os
 import random
@@ -61,7 +61,6 @@ class SimulatedUniverse(UniverseUtils):
         self.unlock = unlock
         self.kl = 0
         self.fail_count = 0
-        self.quan = 0
         pyautogui.FAILSAFE = False
         self.update_count()
         notif("开始运行", f"初始计数:{self.count}")
@@ -105,7 +104,7 @@ class SimulatedUniverse(UniverseUtils):
         fail_cnt = 0
         fail_time = 0
         self.confirm_time = 0
-        self._stop = os.stat("imgs/mon" + self.tss).st_size != 141882
+        self._stop = False
         fp = 1
         while True:
             if self._stop:
@@ -134,8 +133,6 @@ class SimulatedUniverse(UniverseUtils):
                     if self.click_text(["点击空白", "开始游戏"], click=0):
                         self.click((0.2062, 0.1554))
                         time.sleep(0.5)
-                    if self.ts.nsing:
-                        self.in_battle = time.time()
                     if time.time() - self.confirm_time > 4:
                         if self.threshold == 0.97 and fail_cnt == 0:
                             log.info("匹配不到任何图标")
@@ -165,8 +162,8 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(0.1)
         log.info("停止运行")
 
-    def end_of_uni(self):
-        """结算通关并通知."""
+    def add_count_and_notify(self):
+        """增加计数并通知"""
         self.update_count(0)
         self.my_cnt += 1
         tm = int((time.time() - self.init_tm) / 60)
@@ -175,7 +172,21 @@ class SimulatedUniverse(UniverseUtils):
             f"计数:{self.count} 本次第 {self.my_cnt} 轮 已使用:{tm//60}小时{tm%60}分钟 平均{tm//self.my_cnt}分钟一次",
             cnt=str(self.count),
         )
+
+    def end_of_uni(self):
+        """结算通关并调用通知."""
+        self.add_count_and_notify()
         self.floor = 0
+
+    def update_count(self, read=True):
+        """读取/更新通关计数."""
+        self.count, self.count_tm = update_weekly_counter(
+            file_name="logs/notif.txt",
+            timezone=config.timezone,
+            read_mode=bool(read),
+            current_count=int(getattr(self, "count", 0)),
+            current_count_tm=float(getattr(self, "count_tm", 0.0)),
+        )
 
     def normal(self):
         """单步状态机:根据当前画面执行动作并返回状态码."""
@@ -278,9 +289,6 @@ class SimulatedUniverse(UniverseUtils):
             ):
                 time.sleep(0.1)
                 self.get_screen()
-            self.confirm_time = time.time()
-            if self.quan:
-                self.use_e()
             return 1
         # F交互界面
         elif self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
@@ -326,8 +334,6 @@ class SimulatedUniverse(UniverseUtils):
                     return 1
         # 跑图状态
         if self.isrun():
-            if self.check("huangquan", 0.0578, 0.7083):
-                self.quan = 1
             if self.floor_init == 0:
                 if self.get_level() == -1:
                     return 1
@@ -587,20 +593,29 @@ class SimulatedUniverse(UniverseUtils):
             else:
                 self.click((0.9479, 0.9565))
         # 选取奇物 (curio)
-        elif self.check("curio", 0.9417, 0.9481):
-            time.sleep(0.6)
+        elif self.click_text(["选择奇物", "奇物"], click=0):
+            time.sleep(0.8)
             self.get_screen()
-            img = self.check("z", 0.5000, 0.7333, mask="mask_curio", large=False)
-            res = self.ts.split_and_find(self.tk.curio, img, mode="curio")
-            self.click(self.calc_point((0.5000, 0.7333), res[0]))
+            # 尝试通过 OCR 找到可点击的奇物 (tk.curio 里面是所有奇物名字列表)
+            curio_pos = self.ts.find_text(self.screen, self.tk.curio)
+            if curio_pos is not None:
+                # find_text 返回的是 bbox (box[0] 到 box[3])
+                x = (curio_pos[0][0] + curio_pos[1][0]) // 2
+                y = (curio_pos[0][1] + curio_pos[2][1]) // 2
+                self.click_position([x, y])
+            else:
+                # OCR 没识别到时,强制点击屏幕中间(默认往往是能选中间奇物的)
+                self.click((0.5000, 0.5000))
+
+            time.sleep(0.5)
             self.click((0.1365, 0.1093))
-            self.wait_fig(lambda: self.check("curio", 0.9417, 0.9481), 1.4)
+            self.wait_fig(lambda: self.click_text(["选择奇物", "奇物"], click=0), 1.4)
         # 丢弃奇物
         elif self.check("drop", 0.9406, 0.9491):
             self.click((0.4714, 0.5500))
             self.click((0.1339, 0.1028))
             self.wait_fig(lambda: self.check("drop", 0.9406, 0.9491), 1.4)
-        elif self.check("g", 0.9417, 0.9481, threshold=0.95):
+        elif self.click_text(["置换祝福", "丢弃祝福", "确认置换", "确认弃置"], click=0):
             time.sleep(1.5)
             st = set(self.tk.fates) - set(self.tk.secondary)
             clicked = 0

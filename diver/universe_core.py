@@ -1,4 +1,4 @@
-﻿"""差分宇宙自动化核心实现.
+"""差分宇宙自动化核心实现.
 
 该模块实现差分宇宙的完整自动化流程,包括区域导航,事件处理,
 祝福选择,战斗触发等功能.
@@ -127,7 +127,6 @@ class DivergentUniverse(UniverseUtils):
         ocr_time_history (list): OCR 识别耗时历史
         last_fail_timestamp (float): 上次失败时间戳
         last_action_timestamp (float): 上次动作时间戳
-        is_huangquan_mode (bool): 是否启用黄泉模式(特殊角色优化)
         is_daheta_enabled (bool): 是否启用大黑塔角色
         is_daheta_skill_active (bool): 大黑塔秘技是否生效中
         is_baie_enabled (bool): 是否启用白厄模式
@@ -184,10 +183,6 @@ class DivergentUniverse(UniverseUtils):
         self.ocr_time_list = [0.5]  # OCR 识别耗时历史
         self.fail_tm = 0  # 上次失败时间戳
         self.last_action_time = 0  # 上次动作时间戳
-
-        # ===== 特殊角色优化 =====
-        # 黄泉角色优化:启用后使用特殊的战斗触发逻辑
-        self.quan = 0
 
         # 大黑塔角色优化:优先级高于黄泉
         self.da_hei_ta = False  # 是否启用
@@ -603,7 +598,7 @@ class DivergentUniverse(UniverseUtils):
     def align_event(self, key, deep=0, event_text=None, click=0):
         align_event_handler(self, key, deep=deep, event_text=event_text, click=click)
 
-    def skill(self, quan=0):
+    def skill(self):
         if not self.allow_e:
             return
         self.press("e")
@@ -611,10 +606,7 @@ class DivergentUniverse(UniverseUtils):
         self.get_screen()
         if self.check("e", 0.4995, 0.7500):
             self.solve_snack()
-            if quan and self.allow_e:
-                time.sleep(0.4)
-            else:
-                time.sleep(1.5 * self.allow_e)
+            time.sleep(0.8)
 
     def check_dead(self):
         self.get_screen()

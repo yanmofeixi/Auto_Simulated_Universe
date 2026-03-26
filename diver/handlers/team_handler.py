@@ -107,12 +107,10 @@ def prepare_active_character(universe, area_now: str) -> None:
     # 判断队伍成员状态(使用子字符串匹配)
     da_hei_ta_in_team = universe.has_team_member("大黑塔")
     bai_e_in_team = universe.has_team_member("白厄")
-    huang_quan_in_team = universe.has_team_member("黄泉")
 
     # 判断秘技状态
     da_hei_ta_has_skill = "大黑塔" in config.skill_char
     bai_e_has_skill = "白厄" in config.skill_char
-    huang_quan_has_skill = "黄泉" in config.skill_char
 
     # 优先级: 白厄 -> 大黑塔 -> 黄泉 -> 远程角色
     if bai_e_in_team and bai_e_has_skill:
@@ -121,13 +119,9 @@ def prepare_active_character(universe, area_now: str) -> None:
     elif da_hei_ta_in_team and da_hei_ta_has_skill:
         universe.da_hei_ta = True
 
-    elif huang_quan_in_team and huang_quan_has_skill:
-        universe.quan = 1
-
     else:
         universe.da_hei_ta = False
         universe.bai_e = 0
-        universe.quan = 0
 
     # 决策站场角色:大黑塔通用;白厄/黄泉倾向战斗
     if not universe.allow_e:
@@ -141,11 +135,6 @@ def prepare_active_character(universe, area_now: str) -> None:
 
     if universe.bai_e and area_now == "战斗":
         pos = universe.get_team_member_position("白厄")
-        universe.press(str(pos + 1))
-        return
-
-    if universe.quan and area_now == "战斗":
-        pos = universe.get_team_member_position("黄泉")
         universe.press(str(pos + 1))
         return
 

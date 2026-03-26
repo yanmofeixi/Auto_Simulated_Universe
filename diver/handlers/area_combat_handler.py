@@ -35,21 +35,18 @@ def handle_battle_area(universe) -> None:
         keyops.keyUp('w')
         keyops.keyUp('shift')
 
-        if universe.quan and universe.allow_e:
+        if universe.allow_e:
             for _ in range(4):
-                universe.skill(1)
-            universe.press('w')
-            time.sleep(1.5)
-        elif universe.bai_e and universe.allow_e:
-            for _ in range(4):
-                universe.skill(1)
+                universe.skill()
+            if not universe.bai_e:
+                universe.press('w')
             time.sleep(1.5)
         else:
             pyautogui.click()
 
         universe.area_state += 1
     else:
-        if not ((universe.quan or universe.bai_e) and universe.allow_e):
+        if not (universe.bai_e and universe.allow_e):
             universe.press('w', 0.25)
         universe.portal_opening_days(static=1)
 

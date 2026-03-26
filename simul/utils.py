@@ -22,7 +22,8 @@ from utils.common.app_ops import (
     notif as _common_notif,
     set_forground as _common_set_forground,
 )
-from utils.common.keyops import key_down as keyDown, key_up as keyUp
+import simul.keyops as keyops
+from simul.keyops import keyDown, keyUp
 from utils.common.map_log import map_log
 from utils.common.universe_utils_base import UniverseUtilsBase
 from utils.log import log
@@ -514,7 +515,7 @@ class UniverseUtils(UniverseUtilsBase):
                 return
             self.mouse_move(sub)
             self.ang = ang
-            ps = [13, 9 + self.quan * 7, 11, 7]
+            ps = [13, 9, 11, 7]
             if self._stop == 0:
                 keyDown("w")
             time.sleep(0.25)
@@ -634,43 +635,23 @@ class UniverseUtils(UniverseUtilsBase):
             if type == 0:
                 self.lst_tm = time.time()
             if type == 1:
-                if not self.quan:
-                    if self._stop == 0:
-                        pyautogui.click()
-                    time.sleep(1.1)
-                    self.press("s")
-                    if self._stop == 0:
-                        pyautogui.click()
-                    time.sleep(0.8)
-                    if len(self.target) <= 2:
-                        time.sleep(0.3)
-                        self.press("s")
-                        pyautogui.click()
+                # 统一使用 E 技能(秘技)进入战斗
+                keyUp("w")
+                for ii in range(2):
+                    self.use_e()
+                    if ii:
                         time.sleep(0.6)
-                        self.press("s", 0.5)
-                        pyautogui.click()
-                        time.sleep(0.5)
-                        self.press("w", 1.6)
-                        pyautogui.click()
-                else:
-                    keyUp("w")
-                    for ii in range(2):
-                        self.use_e()
-                        if ii:
-                            time.sleep(0.6)
-                        self.use_e()
-                        bw_map = self.get_bw_map()
-                        if bw_map is None:
-                            continue
-                        self.get_loc(bw_map, fbw=1, offset=self.get_offset(2), rg=24)
-                        self.get_real_loc(1)
-                        self.press("w")
-                        self.blessing()
+                    self.use_e()
+                    bw_map = self.get_bw_map()
+                    if bw_map is None:
+                        continue
+                    self.get_loc(bw_map, fbw=1, offset=self.get_offset(2), rg=24)
+                    self.get_real_loc(1)
+                    self.press("w")
+                    self.blessing()
             if type == 3:
                 for i in range(9):
                     self.get_screen()
-                    if self.quan and self.check("choose_blessing", 0.9266, 0.9491):
-                        return
                     if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
                         log.info("大图识别到传送点")
                         self.press("f")
@@ -684,7 +665,7 @@ class UniverseUtils(UniverseUtilsBase):
                         self.press("w", 0.5)
                         time.sleep(0.2)
             # 离目标点挺近了,准备找下一个目标点
-            elif nds <= 20 or self.quan:
+            elif nds <= 20:
                 try:
                     self.target.remove((loc, type))
                     log.info("removed:" + str((loc, type)))
@@ -806,7 +787,7 @@ class UniverseUtils(UniverseUtilsBase):
 
     def get_offset(self, delta=1):
         pi = 3.141592653589
-        dx, dy = sin(self.ang / 180 * pi), cos(self.ang / 180 * pi)
+        dx, dy = math.sin(self.ang / 180 * pi), math.cos(self.ang / 180 * pi)
         return (delta * dx * 3, delta * dy * 3)
 
     # 从8192*8192的超大地图中找到有意义的大地图
@@ -1073,14 +1054,10 @@ class UniverseUtils(UniverseUtilsBase):
                     break
                 if self.check("z", 0.5906, 0.9537, mask="mask_z", threshold=0.95):
                     self.stop_move = 1
-                    time.sleep(
-                        1.7
-                        - (self.quan and self.floor not in [3, 7, 12]) * 0.5
-                    )
+                    time.sleep(1.7)
                     if (
                         self.mini_state == 1
                         and self.floor in [3, 7, 12]
-                        and not self.quan
                     ):
                         keyUp("w")
                         if not self.check(
@@ -1106,24 +1083,22 @@ class UniverseUtils(UniverseUtilsBase):
                         iters += 1
                         if iters > 4:
                             break
-                        if self.quan:
-                            keyUp("w")
-                            self.use_e()
-                            if self.floor not in [3, 7, 12]:
-                                for _ in range(3):
-                                    self.use_e()
-                                self.stop_move = 1
-                                self.mini_state += 2
-                                time.sleep(0.4)
-                                self.press("w")
-                                time.sleep(1.4)
-                                return
-                            else:
-                                time.sleep(0.8)
-                                keyDown("w")
+                        # 统一使用 E 技能(秘技)进入战斗
+                        keyUp("w")
+                        self.use_e()
+                        if self.floor not in [3, 7, 12]:
+                            for _ in range(3):
+                                self.use_e()
+                            self.stop_move = 1
+                            self.mini_state += 2
+                            time.sleep(0.4)
+                            self.press("w")
+                            time.sleep(1.4)
+                            return
                         else:
-                            pyautogui.click()
-                        if iters + self.quan == 2:
+                            time.sleep(0.8)
+                            keyDown("w")
+                        if iters == 2:
                             time.sleep(0.9)
                             self.press("d", 0.85)
                             self.press("a", 0.3)
@@ -1165,7 +1140,7 @@ class UniverseUtils(UniverseUtilsBase):
                         return
                 self.press(i, 0.25)
                 time.sleep(0.4)
-            pyautogui.click()
+            self.use_e()
 
     def solve_snack(self):
         self.get_screen()
@@ -1185,8 +1160,7 @@ class UniverseUtils(UniverseUtilsBase):
     def use_e(self):
         self.press("e")
         time.sleep(0.4)
-        if not self.quan:
-            time.sleep(0.8)
+        time.sleep(0.8)
         self.get_screen()
         if self.check("e", 0.4995, 0.7500):
             self.solve_snack()
