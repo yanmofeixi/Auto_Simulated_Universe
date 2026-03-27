@@ -1253,6 +1253,7 @@ class UniverseUtils(UniverseUtilsBase):
                 return
 
     def click_box(self, box):
+        from utils.common.ui_ops import click_box as common_click_box
         return common_click_box(
             box=box,
             window_width=self.xx,
@@ -1261,6 +1262,7 @@ class UniverseUtils(UniverseUtilsBase):
         )
 
     def click_position(self, position):
+        from utils.common.ui_ops import click_position as common_click_position
         return common_click_position(
             position=position,
             window_width=self.xx,
