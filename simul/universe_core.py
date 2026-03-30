@@ -312,7 +312,8 @@ class SimulatedUniverse(UniverseUtils):
                 # 黑塔
                 if self.ts.sim("黑塔"):
                     # 与黑塔交互后30秒内禁止再次交互(防止死循环)
-                    if time.time() - self.quit > 30 and self.floor:
+                    # 最后一层（floor 11，即第12层）跳过黑塔，直接打BOSS
+                    if time.time() - self.quit > 30 and self.floor and self.floor < 11:
                         self.quit = time.time()
                         self.press("f")
                         self.battle = 0
@@ -593,7 +594,7 @@ class SimulatedUniverse(UniverseUtils):
             else:
                 self.click((0.9479, 0.9565))
         # 选取奇物 (curio)
-        elif self.click_text(["选择奇物", "奇物"], click=0):
+        elif self.check("curio", 0.9417, 0.9481) or self.click_text(["选择奇物"], click=0):
             time.sleep(0.8)
             self.get_screen()
             # 尝试通过 OCR 找到可点击的奇物 (tk.curio 里面是所有奇物名字列表)
@@ -639,7 +640,8 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("setting", 0.9734, 0.3009, threshold=0.98):
             self.click((0.2708, 0.2324))
             self.re_enter()
-        elif self.check("enhance", 0.9208, 0.9380):
+        elif self.check("enhance", 0.9208, 0.9380) or self.click_text(["祝福强化", "所有祝福", "碎片不足"], click=0):
+            log.info("识别到强化界面")
             self.quit = time.time()
             time.sleep(1.5)
             for i in [None, (0.7984, 0.6824), (0.6859, 0.6824)]:
@@ -654,7 +656,7 @@ class SimulatedUniverse(UniverseUtils):
                 tm = time.time()
                 self.get_screen()
                 while (
-                    not self.check("enhance", 0.9208, 0.9380) and time.time() - tm < 7
+                    not (self.check("enhance", 0.9208, 0.9380) or self.click_text(["祝福强化", "所有祝福", "碎片不足"], click=0)) and time.time() - tm < 7
                 ):
                     self.click((0.2062, 0.2054))
                     time.sleep(0.3)

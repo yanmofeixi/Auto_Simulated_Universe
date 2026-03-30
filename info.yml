@@ -1,9 +1,11 @@
 config:
-  angle: 2.9944751391215467
+  angle: 2.9948415632697127
   difficulty: 4
+  team: 白厄盾丹
+  skill:
+  - 白厄
   timezone: Default
   accuracy: 1440
-  team: 白厄盾丹
   enable_portal_prior: 1
   portal_prior:
     战斗: 6
@@ -12,8 +14,6 @@ config:
     财富: 3
     遭遇: 2
     事件: 1
-  skill:
-  - 白厄
   fate: 繁育
   use_consumable: 0
   secondary_fate:
