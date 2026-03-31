@@ -207,7 +207,7 @@ class DivergentUniverse(UniverseUtils):
         self.default_json = self.action_engine.load_actions(self.default_json_path)
         pyautogui.FAILSAFE = False
         self.update_count()
-        notif("开始运行", f"初始计数:{self.count}")
+        notif("开始运行", f"初始计数:{self.count}", cnt=str(self.count))
 
     def route(self):
         self.threshold = config.default_threshold

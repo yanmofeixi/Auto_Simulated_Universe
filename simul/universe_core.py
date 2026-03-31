@@ -19,6 +19,7 @@ from utils.common.map_log import map_log
 from utils.common.window_manager import wait_for_game_foreground
 from utils.common.run_counter import update_weekly_counter
 from utils.log import log
+from simul.minimap_navigator import MinimapNavigator
 
 # 版本号
 version = "v6.3"
@@ -57,13 +58,16 @@ class SimulatedUniverse(UniverseUtils):
         self.floor_tm = time.time()
         self.init_tm = time.time()
         self.my_cnt = 0
+        self.elite_count = 0
+        self.boss_count = 0
         self.re_align = 0
         self.unlock = unlock
         self.kl = 0
         self.fail_count = 0
+        self.explore_mode = False
         pyautogui.FAILSAFE = False
         self.update_count()
-        notif("开始运行", f"初始计数:{self.count}")
+        notif("开始运行", f"初始计数:{self.count}", cnt=str(self.count))
         self.lst_changed = time.time()
         log.info("加载地图")
         for file in os.listdir("imgs/maps"):
@@ -89,9 +93,36 @@ class SimulatedUniverse(UniverseUtils):
         self.ang_neg = 0
         self.first_mini = 1
         self.in_battle = time.time()
+        self.explore_mode = False
         self.map_file = "imgs/maps/my_" + str(random.randint(0, 99999)) + "/"
         if self.find == 0 and not os.path.exists(self.map_file):
             os.mkdir(self.map_file)
+
+    def _run_explore_mode(self):
+        """使用小地图实时探索导航 (地图匹配失败时的后备方案).
+
+        通过 MinimapNavigator 在不依赖预录制地图的情况下探索当前房间,
+        找到交互点/传送门后退出,由 normal() 处理后续状态.
+        """
+        log.info(f"[探索] _run_explore_mode 开始 floor={self.floor} map={self.now_map} sim={self.now_map_sim}")
+        navigator = MinimapNavigator(self)
+        navigator.navigate()
+        # 探索结束后检查是否触发了交互
+        self.get_screen()
+        if self.goodf():
+            text = self.ts.text if hasattr(self.ts, 'text') else '?'
+            log.info(f"[探索] 探索后检测到交互: text='{text}'")
+            self.press("f")
+            if self.ts.sim("区域"):
+                log.info("[探索] 找到传送点,调用 nof(tp)")
+                self.nof(must_be="tp")
+            else:
+                log.info(f"[探索] 找到交互点 '{text}',调用 nof()")
+                self.nof()
+        else:
+            log.info("[探索] 探索结束后未检测到交互 (goodf=False)")
+        self.lst_changed = time.time()
+        log.info("[探索] _run_explore_mode 结束")
 
     def route(self):
         """主循环:等待游戏窗口,识别界面并驱动状态机."""
@@ -169,12 +200,13 @@ class SimulatedUniverse(UniverseUtils):
         tm = int((time.time() - self.init_tm) / 60)
         notif(
             "已完成",
-            f"计数:{self.count} 本次第 {self.my_cnt} 轮 已使用:{tm//60}小时{tm%60}分钟 平均{tm//self.my_cnt}分钟一次",
+            f"计数:{self.count} 精英:{self.elite_count} 首领:{self.boss_count} 本次第{self.my_cnt}轮 用时:{tm//60}h{tm%60}m 均{tm//self.my_cnt}m",
             cnt=str(self.count),
         )
 
     def end_of_uni(self):
         """结算通关并调用通知."""
+        self.boss_count += 1
         self.add_count_and_notify()
         self.floor = 0
 
@@ -363,6 +395,7 @@ class SimulatedUniverse(UniverseUtils):
                     if self.floor in [0, 5]:
                         self.mini_state = 0
                         self.stop_move = 0
+                        self.explore_mode = False
                         while True:
                             self.exist_minimap()
                             now_map, now_map_sim = self.match_scr(self.loc_scr)
@@ -378,21 +411,39 @@ class SimulatedUniverse(UniverseUtils):
                                 break
                             time.sleep(0.3)
                         log.info(f"地图编号:{self.now_map}  相似度:{self.now_map_sim}")
-                        if self.now_map_sim < 0.35:
-                            notif("相似度过低", "疑似在黑塔办公室")
-                        self.now_pth = "imgs/maps/" + self.now_map + "/"
-                        files = self.find_latest_modified_file(self.now_pth)
-                        print("地图文件:", files)
-                        self.big_map = cv.imread(files, cv.IMREAD_GRAYSCALE)
-                        self.debug_map = deepcopy(self.big_map)
-                        xy = files.split("/")[-1].split("_")[1:3]
-                        self.now_loc = (4096 - int(xy[0]), 4096 - int(xy[1]))
-                        self.target = self.get_target(self.now_pth + "target.jpg")
-                        self.get_screen()
-                        shape = (int(self.scx * 190), int(self.scx * 190))
-                        local_screen = self.get_local(0.9333, 0.8657, shape)
-                        self.init_ang = 360 - self.get_now_direc(local_screen) - 90
-                        log.info("target %s" % self.target)
+                        # 检查地图是否有效可用
+                        map_usable = False
+                        if self.now_map != -1 and self.now_map_sim >= 0.5:
+                            self.now_pth = "imgs/maps/" + str(self.now_map) + "/"
+                            log.info(f"[地图匹配] 尝试加载地图: path={self.now_pth}")
+                            try:
+                                files = self.find_latest_modified_file(self.now_pth)
+                                log.info(f"[地图匹配] 地图文件: {files}")
+                                if files:
+                                    self.big_map = cv.imread(files, cv.IMREAD_GRAYSCALE)
+                                    if self.big_map is not None:
+                                        log.info(f"[地图匹配] 大地图加载成功: shape={self.big_map.shape}")
+                                        self.debug_map = deepcopy(self.big_map)
+                                        xy = files.split("/")[-1].split("_")[1:3]
+                                        self.now_loc = (4096 - int(xy[0]), 4096 - int(xy[1]))
+                                        self.target = self.get_target(self.now_pth + "target.jpg")
+                                        self.get_screen()
+                                        shape = (int(self.scx * 190), int(self.scx * 190))
+                                        local_screen = self.get_local(0.9333, 0.8657, shape)
+                                        self.init_ang = 360 - self.get_now_direc(local_screen) - 90
+                                        log.info("target %s" % self.target)
+                                        map_usable = True
+                                    else:
+                                        log.warning(f"[地图匹配] cv.imread 返回 None: {files}")
+                                else:
+                                    log.warning(f"[地图匹配] find_latest_modified_file 返回空: {self.now_pth}")
+                            except Exception as e:
+                                log.warning(f"[地图匹配] 加载地图数据失败: {e}")
+                        else:
+                            log.info(f"[地图匹配] 跳过加载: map={self.now_map} sim={self.now_map_sim} (需 sim>=0.5)")
+                        if not map_usable:
+                            log.info(f"[地图匹配] >>> 切换到探索模式 (编号:{self.now_map} 相似度:{self.now_map_sim})")
+                            self.explore_mode = True
                     if self._stop:
                         return 1
                     if (
@@ -419,17 +470,22 @@ class SimulatedUniverse(UniverseUtils):
             self.lst_tm = time.time()
 
             # 长时间未交互/战斗,暂离或重开
+            # 探索模式给更多时间 (90秒),因为无预录路径需要更久
+            timeout = 90 if self.explore_mode else 45
             if (
                 (
                     (
                         time.time() - self.lst_changed
-                        >= 45
+                        >= timeout
                     )
                     and self.find == 1
                 )
                 or (self.floor == 12 and self.mini_state > 4)
                 or self.kl
             ):
+                # 保存当前游戏截图用于调试
+                self.get_screen()
+                fail_screenshot = self.screen.copy() if self.screen is not None else None
                 time.sleep(2.5)
                 self.press("esc")
                 time.sleep(2)
@@ -440,17 +496,31 @@ class SimulatedUniverse(UniverseUtils):
                     self.click((0.2708, 0.1324))
                     log.info(f"通关!当前层数:{self.floor+1}")
                 elif self.fail_count <= 1:
-                    notif("暂离", f"地图{self.now_map},当前层数:{self.floor+1}")
+                    notif("暂离", f"地图{self.now_map},当前层数:{self.floor+1}", cnt=str(self.count))
                     map_log.error(
                         f"地图{self.now_map}未发现目标,相似度{self.now_map_sim},尝试暂离"
                     )
+                    # 截图保存到日志文件夹
+                    if fail_screenshot is not None:
+                        ts = time.strftime("%Y%m%d_%H%M%S")
+                        sim_str = f"{self.now_map_sim:.4f}" if self.now_map_sim else "NA"
+                        fname = f"logs/map_fail_{ts}_floor{self.floor+1}_map{self.now_map}_sim{sim_str}.png"
+                        cv.imwrite(fname, fail_screenshot)
+                        log.info(f"地图匹配失败截图已保存: {fname}")
                     self.click((0.2708, 0.2324))
                     self.re_enter()
                     self.re_align += 1
                     self.fail_count += 1
                 else:
                     self.multi = 1.01
-                    notif("中途结算", f"地图{self.now_map},当前层数:{self.floor+1}")
+                    notif("中途结算", f"地图{self.now_map},当前层数:{self.floor+1}", cnt=str(self.count))
+                    # 截图保存到日志文件夹
+                    if fail_screenshot is not None:
+                        ts = time.strftime("%Y%m%d_%H%M%S")
+                        sim_str = f"{self.now_map_sim:.4f}" if self.now_map_sim else "NA"
+                        fname = f"logs/map_fail_{ts}_floor{self.floor+1}_map{self.now_map}_sim{sim_str}.png"
+                        cv.imwrite(fname, fail_screenshot)
+                        log.info(f"地图匹配失败截图已保存: {fname}")
                     self.floor = 0
                     self.click((0.2708, 0.1324))
                     map_log.error(
@@ -475,7 +545,11 @@ class SimulatedUniverse(UniverseUtils):
                     self.solve_snack()
             # 寻路
             if self.mini_state:
+                log.info(f"[路由] mini_state={self.mini_state} -> get_direc_only_minimap()")
                 self.get_direc_only_minimap()
+            elif self.explore_mode:
+                log.info(f"[路由] explore_mode=True floor={self.floor} -> _run_explore_mode()")
+                self._run_explore_mode()
             else:
                 self.get_direc()
             return 2

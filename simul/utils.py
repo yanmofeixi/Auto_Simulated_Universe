@@ -451,6 +451,9 @@ class UniverseUtils(UniverseUtilsBase):
                 self.mini_state += 2
             elif self.ts.sim("区域") or must_be == "tp":
                 self.init_map()
+                # 精英层(第4、8层,索引3、7)通过时计数
+                if self.floor in (3, 7) and hasattr(self, "elite_count"):
+                    self.elite_count += 1
                 self.floor += 1
                 self.f_time = time.time()
                 self.lst_changed = time.time()
